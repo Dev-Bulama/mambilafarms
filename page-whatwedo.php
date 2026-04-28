@@ -1,0 +1,106 @@
+<?php
+/**
+ * Template Name: What We Do
+ * Template Post Type: page
+ */
+get_header();
+?>
+
+<div class="page-top">
+  <div class="pb" style="background-image:url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=80')">
+    <div class="pbc">
+      <div class="chip" style="color:var(--pk)">Operations</div>
+      <h1 style="font-size:clamp(2rem,6vw,3.8rem);color:#fff;font-weight:600;line-height:1.1;margin-top:.4rem">What We Do</h1>
+      <p style="color:rgba(255,255,255,.65);max-width:440px;line-height:1.72;margin-top:.75rem;font-size:.92rem">Three integrated revenue streams from one extraordinary highland farm.</p>
+    </div>
+  </div>
+  <div class="stripe"></div>
+</div>
+
+<!-- PILLAR 1: DAIRY -->
+<section style="background:var(--sur)">
+  <div class="wrap">
+    <div class="g2">
+      <div class="revl" style="border-radius:18px;overflow:hidden;aspect-ratio:4/3"><img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?w=900&q=80" style="width:100%;height:100%;object-fit:cover" alt="Dairy"/></div>
+      <div class="revr">
+        <span class="tag-pk" style="margin-bottom:.9rem;display:inline-block">&#x1F95B; Pillar One</span>
+        <h2 class="st">Dairy &amp;<br/><em>Artisan Products</em></h2>
+        <p style="line-height:1.82;margin-bottom:1rem;font-size:.92rem">Our Friesian-cross herd delivers high-volume milk year-round. The dairy unit transforms raw milk into pasteurised milk, probiotic yogurts, aged cheeses, golden butter, and pure ghee &mdash; branded for urban supermarkets, HORECA, and ECOWAS export markets.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:1.25rem">
+          <div style="background:#fff;padding:.85rem;border-radius:10px;border-left:3px solid var(--pk);box-shadow:0 2px 10px rgba(255,84,135,.07)"><div style="font-weight:700;font-size:.86rem;margin-bottom:.15rem;color:var(--pkd)">Fresh Milk</div><div style="font-size:.76rem;color:var(--t2)">Pasteurised, retail-packed</div></div>
+          <div style="background:#fff;padding:.85rem;border-radius:10px;border-left:3px solid var(--pk);box-shadow:0 2px 10px rgba(255,84,135,.07)"><div style="font-weight:700;font-size:.86rem;margin-bottom:.15rem;color:var(--pkd)">Yogurt &amp; Cheese</div><div style="font-size:.76rem;color:var(--t2)">Probiotic, artisan varieties</div></div>
+          <div style="background:#fff;padding:.85rem;border-radius:10px;border-left:3px solid var(--pk);box-shadow:0 2px 10px rgba(255,84,135,.07)"><div style="font-weight:700;font-size:.86rem;margin-bottom:.15rem;color:var(--pkd)">Butter &amp; Ghee</div><div style="font-size:.76rem;color:var(--t2)">Premium, export-quality</div></div>
+          <div style="background:var(--gnl);padding:.85rem;border-radius:10px;border-left:3px solid var(--gn)"><div style="font-weight:700;font-size:.86rem;margin-bottom:.15rem;color:var(--gnd)">Starts Year 3</div><div style="font-size:.76rem;color:var(--gnd)">Quarterly distributions</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILLAR 2: BEEF -->
+<section style="background:#fff">
+  <div class="wrap">
+    <div class="g2">
+      <div class="revl">
+        <span class="tag-gn" style="margin-bottom:.9rem;display:inline-block">&#x1F969; Pillar Two</span>
+        <h2 class="st">Premium Beef &amp;<br/><em class="gn">Modern Abattoir</em></h2>
+        <p style="line-height:1.82;margin-bottom:1rem;font-size:.92rem">Our abattoir is designed to international food safety standards. Cattle are feedlot-finished for 60&ndash;90 days before processing into branded premium cuts &mdash; rib-eye, sirloin, tenderloin &mdash; sold to premium retail, hotels, and ECOWAS export channels.</p>
+        <p class="sl" style="margin-bottom:1.4rem;font-size:.9rem">Long-term supply contracts protect against local price volatility. Continuous beef revenue stream from Year 3.</p>
+        <div style="background:var(--gnl);border-radius:12px;padding:1.1rem 1.25rem;border-left:4px solid var(--gn)">
+          <p style="font-size:.86rem;color:var(--gnd);font-weight:600;line-height:1.58">Every animal RFID-tagged from birth to processing &mdash; complete chain of custody, zero quality compromise.</p>
+        </div>
+      </div>
+      <div class="revr" style="border-radius:18px;overflow:hidden;aspect-ratio:4/3"><img src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=900&q=80" style="width:100%;height:100%;object-fit:cover" alt="Beef"/></div>
+    </div>
+  </div>
+</section>
+
+<!-- PILLAR 3: AI BREEDING -->
+<section style="background:var(--pklx)">
+  <div class="wrap">
+    <div class="g2">
+      <div class="revl" style="border-radius:18px;overflow:hidden;aspect-ratio:4/3"><img src="https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=900&q=80" style="width:100%;height:100%;object-fit:cover" alt="Breeding"/></div>
+      <div class="revr">
+        <span class="tag-pk" style="margin-bottom:.9rem;display:inline-block">&#x1F404; Pillar Three</span>
+        <h2 class="st">AI Breeding &amp;<br/><em>Superior Genetics</em></h2>
+        <p style="line-height:1.82;margin-bottom:1rem;font-size:.92rem">Our Artificial Insemination program upgrades Adamawa Gudali stock using Friesian and Simmental semen &mdash; producing F1 crossbreeds that outperform in both milk volume and body weight.</p>
+        <p class="sl" style="margin-bottom:1.5rem;font-size:.9rem">Surplus heifers and bulls sold at premium prices to smallholder farmers nationwide &mdash; a high-margin third revenue stream with growing demand.</p>
+        <div style="display:flex;gap:2rem">
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:1.75rem;color:var(--pkd);font-weight:700">&lt;5%</div><div style="font-size:.76rem;color:var(--t2)">Target mortality</div></div>
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:1.75rem;color:var(--pkd);font-weight:700">F1</div><div style="font-size:.76rem;color:var(--t2)">Crossbred calves</div></div>
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:1.75rem;color:var(--pkd);font-weight:700">RFID</div><div style="font-size:.76rem;color:var(--t2)">All animals tracked</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE PROCESS -->
+<section style="background:linear-gradient(135deg,var(--ink),#2A0520)">
+  <div class="wrap">
+    <div style="text-align:center;margin-bottom:2.75rem">
+      <div class="chip" style="color:var(--pk);justify-content:center">The Process</div>
+      <h2 style="font-size:clamp(1.75rem,5vw,2.8rem);color:#fff;font-weight:600;font-family:'Cormorant Garamond',serif">How Your Investment <em style="color:var(--pk)">Works</em></h2>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1.5rem">
+      <div style="display:flex;gap:1.25rem;align-items:flex-start">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--pk);color:#fff;display:grid;place-items:center;flex-shrink:0;font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:700">1</div>
+        <div><h4 style="color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;margin-bottom:.3rem">Subscribe</h4><p style="color:rgba(255,255,255,.55);font-size:.85rem;line-height:1.65">Choose your tier, complete the form, transfer in 3 tranches over 90 days.</p></div>
+      </div>
+      <div style="display:flex;gap:1.25rem;align-items:flex-start">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--pk);color:#fff;display:grid;place-items:center;flex-shrink:0;font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:700">2</div>
+        <div><h4 style="color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;margin-bottom:.3rem">Allotment</h4><p style="color:rgba(255,255,255,.55);font-size:.85rem;line-height:1.65">Receive Cow Units Allotment Letter and dashboard access. Cattle RFID-tagged and insured.</p></div>
+      </div>
+      <div style="display:flex;gap:1.25rem;align-items:flex-start">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--pk);color:#fff;display:grid;place-items:center;flex-shrink:0;font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:700">3</div>
+        <div><h4 style="color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;margin-bottom:.3rem">Grow &amp; Harvest</h4><p style="color:rgba(255,255,255,.55);font-size:.85rem;line-height:1.65">Track via dashboard, collect quarterly distributions, full settlement at Year 5.</p></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem">
+      <a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>" class="bp" style="display:inline-flex;width:auto">Begin Your Journey &rarr;</a>
+    </div>
+  </div>
+</section>
+<div class="stripe"></div>
+
+<?php get_footer(); ?>
