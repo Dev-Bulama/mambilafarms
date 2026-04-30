@@ -65,8 +65,16 @@ class RegistrationController extends Controller
 
             // Send emails — failures are caught so registration isn't blocked
             try {
-                $adminEmail = Setting::get('company_email', config('mail.from.address'));
-                Mail::to($adminEmail)->send(new InvestorRegisteredAdmin($investor));
+                // Send admin notification to all configured notification emails
+                $notificationSetting = Setting::get(
+                    'admin_notification_emails',
+                    Setting::get('company_email', config('mail.from.address'))
+                );
+                $adminEmails = array_values(array_filter(array_map('trim', explode(',', $notificationSetting))));
+                if (!empty($adminEmails)) {
+                    Mail::to($adminEmails)->send(new InvestorRegisteredAdmin($investor));
+                }
+                // Send confirmation to investor
                 Mail::to($investor->user->email)->send(new InvestorRegisteredConfirmation($investor));
             } catch (\Exception $e) {
                 logger()->error('Registration mail failed: ' . $e->getMessage());

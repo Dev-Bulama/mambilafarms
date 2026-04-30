@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Investor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -63,6 +64,37 @@ class AdminController extends Controller
         $investor->update(['status' => $request->status]);
 
         return back()->with('success', "Status updated to \"{$request->status}\" for {$investor->full_name}.");
+    }
+
+    public function profile()
+    {
+        return view('admin.profile');
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'name'                  => 'required|string|max:255',
+            'email'                 => 'required|email|unique:users,email,' . $user->id,
+            'current_password'      => 'nullable|string',
+            'new_password'          => 'nullable|string|min:8|confirmed',
+        ]);
+
+        // If changing password, verify current password first
+        if ($request->filled('new_password')) {
+            if (!$request->filled('current_password') || !Hash::check($request->current_password, $user->password)) {
+                return back()->withErrors(['current_password' => 'Current password is incorrect.'])->withInput();
+            }
+            $user->password = Hash::make($request->new_password);
+        }
+
+        $user->name  = $request->name;
+        $user->email = $request->email;
+        $user->save();
+
+        return back()->with('success', 'Profile updated successfully.');
     }
 
     public function exportCsv()

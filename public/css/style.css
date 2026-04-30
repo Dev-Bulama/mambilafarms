@@ -377,3 +377,19 @@ footer h5{color:rgba(255,255,255,.78);font-size:.7rem;font-weight:700;letter-spa
 @media(min-width:1200px){
   section{padding:6rem 2rem}
 }
+
+/* ─── PILLAR CARDS ─── */
+.pillar-card{background:#fff;border-radius:16px;padding:1.75rem 1.5rem;box-shadow:0 3px 18px rgba(255,84,135,.07);border-top:3px solid var(--pk);display:flex;flex-direction:column}
+.pillar-icon{font-size:2.2rem;margin-bottom:.85rem}
+.pillar-card h3{font-size:1.15rem;margin-bottom:.55rem}
+.pillar-card p{font-size:.86rem;color:var(--t2);line-height:1.75;flex:1}
+.pillar-tag{margin-top:.85rem;font-size:.68rem;font-weight:700;color:var(--pkd);background:var(--pklx);padding:.3rem .7rem;border-radius:6px;display:inline-block;letter-spacing:.03em}
+
+/* ─── PROTECTION CARDS ─── */
+.prot-card{background:#fff;border-radius:14px;padding:1.5rem;box-shadow:0 2px 14px rgba(255,84,135,.07)}
+.prot-icon{font-size:1.9rem;margin-bottom:.75rem}
+.prot-card h4{font-size:.98rem;margin-bottom:.4rem}
+.prot-card p{font-size:.82rem;color:var(--t2);line-height:1.7}
+
+/* ─── FOOTER BOTTOM ─── */
+.foot-bottom{padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.07);text-align:center;font-size:.75rem;color:rgba(255,255,255,.2)}
