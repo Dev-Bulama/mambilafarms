@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Investor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\InvestorStatusChanged;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -58,12 +60,26 @@ class AdminController extends Controller
     public function updateStatus(Request $request, Investor $investor)
     {
         $request->validate([
-            'status' => 'required|in:pending,approved,active,suspended,completed',
+            'status'          => 'required|in:pending,approved,active,suspended,completed',
+            'notify_investor' => 'nullable|boolean',
         ]);
 
+        $oldStatus = $investor->status;
         $investor->update(['status' => $request->status]);
 
-        return back()->with('success', "Status updated to \"{$request->status}\" for {$investor->full_name}.");
+        $notified = false;
+        if ($request->boolean('notify_investor') && $oldStatus !== $request->status) {
+            try {
+                $investor->load('user');
+                Mail::to($investor->user->email)->send(new InvestorStatusChanged($investor));
+                $notified = true;
+            } catch (\Exception $e) {
+                logger()->error('Status change mail failed: ' . $e->getMessage());
+            }
+        }
+
+        $suffix = $notified ? ' Notification email sent to investor.' : '';
+        return back()->with('success', "Status updated to \"{$request->status}\" for {$investor->full_name}.{$suffix}");
     }
 
     public function profile()
