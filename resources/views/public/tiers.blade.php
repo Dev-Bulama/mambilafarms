@@ -1,5 +1,18 @@
 @extends('layouts.public')
-@php $page = 'tiers'; @endphp
+@php
+$page = 'tiers';
+try {
+  $heroTitle     = \App\Models\Setting::get('tiers_hero_title', 'Investment Tiers');
+  $heroSub       = \App\Models\Setting::get('tiers_hero_sub', 'Six structured tiers from ₦10M to ₦1B+. Every tier includes insurance, dashboard access and quarterly reporting.');
+  $secHeading    = \App\Models\Setting::get('tiers_section_heading', 'Choose Your Investment Level');
+  $secSub        = \App\Models\Setting::get('tiers_section_sub', 'Every tier includes livestock insurance, digital dashboard, and quarterly reports.');
+} catch (\Exception $e) {
+  $heroTitle = 'Investment Tiers';
+  $heroSub   = 'Six structured tiers from ₦10M to ₦1B+. Every tier includes insurance, dashboard access and quarterly reporting.';
+  $secHeading = 'Choose Your Investment Level';
+  $secSub = 'Every tier includes livestock insurance, digital dashboard, and quarterly reports.';
+}
+@endphp
 @section('title', 'Investment Tiers — Mambilla Legacy Farms')
 
 @section('hero')
@@ -7,8 +20,8 @@
   <div class="pb" style="background-image:url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=80')">
     <div class="pbc">
       <div class="chip" style="color:var(--pk)">Investment Options</div>
-      <h1 style="font-size:clamp(2rem,6vw,3.8rem);color:#fff;font-weight:600;line-height:1.1;margin-top:.4rem">Investment Tiers</h1>
-      <p style="color:rgba(255,255,255,.65);max-width:440px;line-height:1.72;margin-top:.75rem;font-size:.92rem">Six structured tiers from ₦10M to ₦1B+. Every tier includes insurance, dashboard access and quarterly reporting.</p>
+      <h1 style="font-size:clamp(2rem,6vw,3.8rem);color:#fff;font-weight:600;line-height:1.1;margin-top:.4rem">{{ $heroTitle }}</h1>
+      <p style="color:rgba(255,255,255,.65);max-width:440px;line-height:1.72;margin-top:.75rem;font-size:.92rem">{{ $heroSub }}</p>
     </div>
   </div>
   <div class="stripe"></div>
@@ -21,7 +34,8 @@
   <div class="wrap">
     <div style="text-align:center;margin-bottom:2.5rem">
       <div class="chip">Individual Tiers</div>
-      <h2 class="st">Choose Your <em>Investment Level</em></h2>
+      <h2 class="st">{{ $secHeading }}</h2>
+      @if($secSub)<p style="color:var(--t2,#666);max-width:480px;margin:.6rem auto 0;line-height:1.75;font-size:.9rem">{{ $secSub }}</p>@endif
     </div>
 
     <div class="g3">

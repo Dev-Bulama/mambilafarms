@@ -11,7 +11,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 class RegistrationController extends Controller
 {
@@ -37,7 +36,7 @@ class RegistrationController extends Controller
             $user = User::create([
                 'name'     => $data['full_name'],
                 'email'    => $data['email'],
-                'password' => Hash::make(Str::random(16)), // investor sets password via email link if needed
+                'password' => Hash::make($data['password']),
                 'role'     => 'investor',
             ]);
 

@@ -25,6 +25,7 @@ class RegistrationRequest extends FormRequest
             'tier'            => 'required|in:Starter,Bronze,Silver,Gold,Platinum,Diamond,Custom',
             'custom_amount'   => 'nullable|string|max:100',
             'payment_method'  => 'required|in:Bank Transfer,RTGS,Cheque,Other',
+            'password'        => 'required|string|min:8|confirmed',
             'notes'           => 'nullable|string|max:2000',
             'declaration_1'   => 'required|accepted',
             'declaration_2'   => 'required|accepted',
@@ -43,5 +44,5 @@ class RegistrationRequest extends FormRequest
     }
 
     // Never flash sensitive fields back to session
-    protected $dontFlash = ['bvn_rc_number', 'tax_id'];
+    protected $dontFlash = ['bvn_rc_number', 'tax_id', 'password', 'password_confirmation'];
 }

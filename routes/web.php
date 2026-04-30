@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CmsController;
 use App\Http\Controllers\InvestorController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\RegistrationController;
@@ -40,6 +41,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/settings',                      [SettingsController::class, 'show'])->name('settings');
     Route::post('/settings',                     [SettingsController::class, 'update'])->name('settings.update');
     Route::get('/settings/test-smtp',            [SettingsController::class, 'testSmtp'])->name('settings.test-smtp');
+    Route::get('/cms',                           [CmsController::class, 'show'])->name('cms');
+    Route::post('/cms',                          [CmsController::class, 'update'])->name('cms.update');
     Route::get('/profile',                       [AdminController::class, 'profile'])->name('profile');
     Route::post('/profile',                      [AdminController::class, 'updateProfile'])->name('profile.update');
 });
