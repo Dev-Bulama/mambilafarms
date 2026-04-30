@@ -63,17 +63,21 @@
             <div class="fi"><label>Alternate Phone</label><input type="tel" name="phone_alternate" value="{{ old('phone_alternate') }}" placeholder="+234 xxx xxx xxxx"/></div>
           </div>
           <div class="fi"><label>Email Address *</label><input type="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" required/></div>
+          <div class="form-grid">
+            <div class="fi"><label>Password *</label><input type="password" name="password" placeholder="Min. 8 characters" required minlength="8"/></div>
+            <div class="fi"><label>Confirm Password *</label><input type="password" name="password_confirmation" placeholder="Repeat password" required/></div>
+          </div>
           <div class="fi"><label>Residential / Registered Address *</label><input type="text" name="address" value="{{ old('address') }}" placeholder="Street Address" required/></div>
           <div class="form-grid">
             <div class="fi"><label>City / State</label><input type="text" name="city_state" value="{{ old('city_state') }}" placeholder="Lagos, Lagos State"/></div>
             <div class="fi"><label>Country *</label><input type="text" name="country" value="{{ old('country', 'Nigeria') }}" placeholder="Nigeria" required/></div>
           </div>
           <div class="fi"><label>Preferred Communication</label>
-            <div class="comm-row">
-              <label><input type="checkbox" name="comm_email" style="accent-color:var(--pk)" {{ old('comm_email') ? 'checked' : '' }}/> Email</label>
-              <label><input type="checkbox" name="comm_phone" style="accent-color:var(--pk)" {{ old('comm_phone') ? 'checked' : '' }}/> Phone</label>
-              <label><input type="checkbox" name="comm_whatsapp" style="accent-color:var(--pk)" {{ old('comm_whatsapp') ? 'checked' : '' }}/> WhatsApp</label>
-              <label><input type="checkbox" name="comm_sms" style="accent-color:var(--pk)" {{ old('comm_sms') ? 'checked' : '' }}/> SMS</label>
+            <div class="comm-row" id="comm-row">
+              <label class="comm-opt {{ old('comm_email') ? 'comm-on' : '' }}"><input type="checkbox" name="comm_email" value="1" style="accent-color:var(--pk)" {{ old('comm_email') ? 'checked' : '' }}/> Email</label>
+              <label class="comm-opt {{ old('comm_phone') ? 'comm-on' : '' }}"><input type="checkbox" name="comm_phone" value="1" style="accent-color:var(--pk)" {{ old('comm_phone') ? 'checked' : '' }}/> Phone</label>
+              <label class="comm-opt {{ old('comm_whatsapp') ? 'comm-on' : '' }}"><input type="checkbox" name="comm_whatsapp" value="1" style="accent-color:var(--pk)" {{ old('comm_whatsapp') ? 'checked' : '' }}/> WhatsApp</label>
+              <label class="comm-opt {{ old('comm_sms') ? 'comm-on' : '' }}"><input type="checkbox" name="comm_sms" value="1" style="accent-color:var(--pk)" {{ old('comm_sms') ? 'checked' : '' }}/> SMS</label>
             </div>
           </div>
           <div class="fi"><label>Type of Investor *</label>
@@ -155,8 +159,21 @@
 </section>
 @endsection
 
+@push('styles')
+<style>
+.comm-opt{transition:background .15s,color .15s,border-color .15s;border:1.5px solid transparent}
+.comm-opt.comm-on{background:var(--pk)!important;color:#fff!important;border-color:var(--pkd)!important}
+.comm-opt.comm-on input{accent-color:#fff}
+</style>
+@endpush
+
 @push('scripts')
 <script>
+document.querySelectorAll('.comm-opt input[type=checkbox]').forEach(function(cb){
+  function sync(){cb.closest('.comm-opt').classList.toggle('comm-on',cb.checked);}
+  sync();
+  cb.addEventListener('change',sync);
+});
 (function(){
   const fl=document.getElementById('form-layout');
   function layout(){

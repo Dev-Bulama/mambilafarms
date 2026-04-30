@@ -1,5 +1,65 @@
 @extends('layouts.public')
-@php $page = 'home'; @endphp
+@php
+$page = 'home';
+try {
+  $heroEyebrow = \App\Models\Setting::get('site_hero_eyebrow', "Nigeria's Cattle Revolution");
+  $heroTitle   = \App\Models\Setting::get('site_hero_title', 'Build Lasting Wealth Through Livestock');
+  $heroBody    = \App\Models\Setting::get('site_hero_body', 'Join a structured 5-year cattle investment programme delivering 34–300% returns, backed by an SPV legal structure, livestock insurance and quarterly reporting.');
+
+  $stats = [];
+  $statDefaults = [
+    ['1M','Head of Cattle','var(--pk)'],
+    ['57%','Annual Returns','var(--gn)'],
+    ['50K+','Jobs Created','var(--pk)'],
+    ['₦5T','GDP Contribution','var(--gn)'],
+    ['5yrs','Investment Horizon','var(--pk)'],
+  ];
+  for ($si = 1; $si <= 5; $si++) {
+    $stats[] = [
+      \App\Models\Setting::get('home_stat_'.$si.'_num',   $statDefaults[$si-1][0]),
+      \App\Models\Setting::get('home_stat_'.$si.'_label', $statDefaults[$si-1][1]),
+      $statDefaults[$si-1][2],
+    ];
+  }
+
+  $pillars = [];
+  $pillarDefaults = [
+    ['🥛','Dairy & Artisan Products','Fresh milk, yogurt, artisan cheese, butter and ghee from Friesian crossbreeds. Premium pricing, year-round demand.','Quarterly payouts from Year 3'],
+    ['🥩','Premium Beef & Abattoir','Feedlot-finished premium cuts, branded packaging and ECOWAS regional export through a modern certified abattoir.','Event payouts from Year 3'],
+    ['🧬','AI Breeding Stock','F1 crossbreeds (Friesian × Simmental × Gudali) sold to smallholder farmers and government programmes nationwide.','Proportionate share from Year 3'],
+  ];
+  for ($pi = 1; $pi <= 3; $pi++) {
+    $pillars[] = [
+      \App\Models\Setting::get('home_pillar_'.$pi.'_icon',  $pillarDefaults[$pi-1][0]),
+      \App\Models\Setting::get('home_pillar_'.$pi.'_title', $pillarDefaults[$pi-1][1]),
+      \App\Models\Setting::get('home_pillar_'.$pi.'_body',  $pillarDefaults[$pi-1][2]),
+      \App\Models\Setting::get('home_pillar_'.$pi.'_tag',   $pillarDefaults[$pi-1][3]),
+    ];
+  }
+
+  $whyChip    = \App\Models\Setting::get('home_why_chip', 'Why Mambilla');
+  $whyHeading = \App\Models\Setting::get('home_why_heading', 'A Structured Pathway to Agricultural Wealth');
+  $whyBody    = \App\Models\Setting::get('home_why_body', "The Mambilla Plateau—Nigeria's highest grassland—offers optimal conditions: cool climate, vast water resources, rich pasture and government-backed agricultural zones, giving our herd a natural competitive advantage.");
+  $whyStat    = \App\Models\Setting::get('home_why_stat', '57%');
+
+  $ctaHeading = \App\Models\Setting::get('home_cta_heading', 'Ready to Build Your Legacy?');
+  $ctaBody    = \App\Models\Setting::get('home_cta_body', 'Complete the subscription form and our team will contact you within 24 hours.');
+} catch (\Exception $e) {
+  $heroEyebrow = "Nigeria's Cattle Revolution";
+  $heroTitle   = 'Build Lasting Wealth Through Livestock';
+  $heroBody    = 'Join a structured 5-year cattle investment programme delivering 34–300% returns, backed by an SPV legal structure, livestock insurance and quarterly reporting.';
+  $stats = [['1M','Head of Cattle','var(--pk)'],['57%','Annual Returns','var(--gn)'],['50K+','Jobs Created','var(--pk)'],['₦5T','GDP Contribution','var(--gn)'],['5yrs','Investment Horizon','var(--pk)']];
+  $pillars = [
+    ['🥛','Dairy & Artisan Products','Fresh milk, yogurt, artisan cheese, butter and ghee from Friesian crossbreeds. Premium pricing, year-round demand.','Quarterly payouts from Year 3'],
+    ['🥩','Premium Beef & Abattoir','Feedlot-finished premium cuts, branded packaging and ECOWAS regional export through a modern certified abattoir.','Event payouts from Year 3'],
+    ['🧬','AI Breeding Stock','F1 crossbreeds (Friesian × Simmental × Gudali) sold to smallholder farmers and government programmes nationwide.','Proportionate share from Year 3'],
+  ];
+  $whyChip = 'Why Mambilla'; $whyHeading = 'A Structured Pathway to Agricultural Wealth';
+  $whyBody = "The Mambilla Plateau—Nigeria's highest grassland—offers optimal conditions.";
+  $whyStat = '57%'; $ctaHeading = 'Ready to Build Your Legacy?';
+  $ctaBody = 'Complete the subscription form and our team will contact you within 24 hours.';
+}
+@endphp
 @section('title', 'Mambilla Legacy Farms — Invest in Nigeria\'s Cattle Revolution')
 
 @section('hero')
@@ -11,10 +71,10 @@
   <div class="slide s4"></div>
 
   <div class="hc">
-    <div class="eye"><i></i>Nigeria's Cattle Revolution</div>
-    <h1 class="h1">Build Lasting Wealth<br><em>Through Livestock</em></h1>
+    <div class="eye"><i></i>{{ $heroEyebrow }}</div>
+    <h1 class="h1">{{ $heroTitle }}</h1>
     <div class="rule"></div>
-    <p class="hp">Join a structured 5-year cattle investment programme delivering 34–300% returns, backed by an SPV legal structure, livestock insurance and quarterly reporting.</p>
+    <p class="hp">{{ $heroBody }}</p>
     <div class="ha">
       <a href="{{ route('invest') }}" class="bp">Start Investing Today →</a>
       <a href="{{ route('tiers') }}" class="bg">View Tiers</a>
@@ -30,11 +90,9 @@
   </div>
 
   <div class="hstats">
-    <div class="hs"><div class="hsn">1M</div><div class="hsl">Head of Cattle</div></div>
-    <div class="hs"><div class="hsn" style="color:var(--gn)">57%</div><div class="hsl">Annual Returns</div></div>
-    <div class="hs"><div class="hsn">50K+</div><div class="hsl">Jobs Created</div></div>
-    <div class="hs"><div class="hsn" style="color:var(--gn)">₦5T</div><div class="hsl">GDP Contribution</div></div>
-    <div class="hs"><div class="hsn">5yrs</div><div class="hsl">Investment Horizon</div></div>
+    @foreach($stats as [$snum,$slabel,$scolor])
+    <div class="hs"><div class="hsn" style="color:{{ $scolor }}">{{ $snum }}</div><div class="hsl">{{ $slabel }}</div></div>
+    @endforeach
   </div>
 </div>
 @endsection
@@ -49,24 +107,14 @@
       <h2 class="st">Three Pillars of <em>Sustainable Returns</em></h2>
     </div>
     <div class="g3">
+      @foreach($pillars as [$picon,$ptitle,$pbody,$ptag])
       <div class="rev pillar-card">
-        <div class="pillar-icon">🥛</div>
-        <h3>Dairy &amp; Artisan Products</h3>
-        <p>Fresh milk, yogurt, artisan cheese, butter and ghee from Friesian crossbreeds. Premium pricing, year-round demand.</p>
-        <div class="pillar-tag">Quarterly payouts from Year 3</div>
+        <div class="pillar-icon">{{ $picon }}</div>
+        <h3>{{ $ptitle }}</h3>
+        <p>{{ $pbody }}</p>
+        <div class="pillar-tag">{{ $ptag }}</div>
       </div>
-      <div class="rev pillar-card">
-        <div class="pillar-icon">🥩</div>
-        <h3>Premium Beef &amp; Abattoir</h3>
-        <p>Feedlot-finished premium cuts, branded packaging and ECOWAS regional export through a modern certified abattoir.</p>
-        <div class="pillar-tag">Event payouts from Year 3</div>
-      </div>
-      <div class="rev pillar-card">
-        <div class="pillar-icon">🧬</div>
-        <h3>AI Breeding Stock</h3>
-        <p>F1 crossbreeds (Friesian × Simmental × Gudali) sold to smallholder farmers and government programmes nationwide.</p>
-        <div class="pillar-tag">Proportionate share from Year 3</div>
-      </div>
+      @endforeach
     </div>
   </div>
 </section>
@@ -76,9 +124,9 @@
   <div class="wrap">
     <div class="g2">
       <div class="revl">
-        <div class="chip" style="color:var(--pk)">Why Mambilla</div>
-        <h2 class="st" style="color:#fff">A Structured Pathway to <em>Agricultural Wealth</em></h2>
-        <p style="color:rgba(255,255,255,.6);line-height:1.85;margin:1rem 0 1.4rem">The Mambilla Plateau—Nigeria's highest grassland—offers optimal conditions: cool climate, vast water resources, rich pasture and government-backed agricultural zones, giving our herd a natural competitive advantage.</p>
+        <div class="chip" style="color:var(--pk)">{{ $whyChip }}</div>
+        <h2 class="st" style="color:#fff">{{ $whyHeading }}</h2>
+        <p style="color:rgba(255,255,255,.6);line-height:1.85;margin:1rem 0 1.4rem">{{ $whyBody }}</p>
         <a href="{{ route('about') }}" class="bo">Learn About the Programme →</a>
       </div>
       <div class="revr" style="position:relative">
@@ -86,7 +134,7 @@
           <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=80" alt="Cattle herd" style="width:100%;height:100%;object-fit:cover"/>
         </div>
         <div style="position:absolute;bottom:-1rem;right:-1rem;background:linear-gradient(135deg,var(--pkd),var(--pk));border-radius:14px;padding:1rem 1.2rem;text-align:center;box-shadow:0 8px 28px rgba(255,84,135,.35)">
-          <div style="font-size:1.8rem;font-weight:800;color:#fff;font-family:'Cormorant Garamond',serif">57%</div>
+          <div style="font-size:1.8rem;font-weight:800;color:#fff;font-family:'Cormorant Garamond',serif">{{ $whyStat }}</div>
           <div style="font-size:.7rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.08em">Annual Returns</div>
         </div>
       </div>
@@ -159,8 +207,8 @@
 <!-- CTA BANNER -->
 <section style="background:linear-gradient(135deg,var(--pkd),var(--pk));text-align:center">
   <div style="max-width:520px;margin:0 auto">
-    <h2 style="font-size:clamp(1.5rem,4vw,2.2rem);color:#fff;margin-bottom:.75rem">Ready to Build Your <em>Legacy?</em></h2>
-    <p style="color:rgba(255,255,255,.78);line-height:1.8;margin-bottom:1.5rem">Complete the subscription form and our team will contact you within 24 hours.</p>
+    <h2 style="font-size:clamp(1.5rem,4vw,2.2rem);color:#fff;margin-bottom:.75rem">{{ $ctaHeading }}</h2>
+    <p style="color:rgba(255,255,255,.78);line-height:1.8;margin-bottom:1.5rem">{{ $ctaBody }}</p>
     <a href="{{ route('invest') }}" style="display:inline-block;background:#fff;color:var(--pkd);padding:.9rem 2rem;border-radius:10px;font-weight:700;text-decoration:none;font-size:.95rem">Fill Subscription Form →</a>
   </div>
 </section>

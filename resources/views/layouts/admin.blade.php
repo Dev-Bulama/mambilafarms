@@ -155,6 +155,11 @@ textarea.form-control{resize:vertical;min-height:80px}
       <span class="icon">📊</span> Export Excel
     </a>
 
+    <div class="sb-label">Content</div>
+    <a href="{{ route('admin.cms') }}" class="sb-link {{ request()->routeIs('admin.cms*') ? 'active' : '' }}">
+      <span class="icon">✏️</span> Pages &amp; Content
+    </a>
+
     <div class="sb-label">System</div>
     <a href="{{ route('admin.settings') }}" class="sb-link {{ request()->routeIs('admin.settings*') ? 'active' : '' }}">
       <span class="icon">⚙️</span> Settings

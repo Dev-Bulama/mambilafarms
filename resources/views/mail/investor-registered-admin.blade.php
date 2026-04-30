@@ -27,7 +27,7 @@
     function mailRow(string $label, ?string $value): string {
       return '<tr>
         <td style="padding:10px 16px;font-size:11px;font-weight:700;color:#9a90a8;text-transform:uppercase;letter-spacing:0.07em;width:148px;vertical-align:top;white-space:nowrap">'.$label.'</td>
-        <td style="padding:10px 16px;font-size:13.5px;color:#1A0A12;font-weight:500;border-left:2px solid #fce4ef">'.e($value ?? '—').'</td>
+        <td style="padding:10px 16px;font-size:13.5px;color:#1A0A12;font-weight:500;border-left:2px solid #fce4ef">'.($value ?? '—').'</td>
       </tr>';
     }
     @endphp
@@ -36,12 +36,12 @@
     <div style="margin-bottom:20px;border-radius:10px;overflow:hidden;box-shadow:0 2px 14px rgba(216,27,122,0.09)">
       <div style="background:linear-gradient(135deg,#c0105a,#FF5487);padding:10px 18px"><span style="font-size:10.5px;font-weight:800;color:rgba(255,255,255,0.92);text-transform:uppercase;letter-spacing:0.12em">👤 Personal Information</span></div>
       <table style="width:100%;border-collapse:collapse;background:#fff">
-        {!! mailRow('Full Name', '<strong>'.$investor->full_name.'</strong>') !!}
-        {!! mailRow('Reference', $investor->reference_number) !!}
-        {!! mailRow('Date of Birth', $investor->date_of_birth?->format('d M Y')) !!}
-        {!! mailRow('BVN / RC No.', $investor->bvn_rc_number) !!}
-        {!! mailRow('Tax ID (TIN)', $investor->tax_id) !!}
-        {!! mailRow('Investor Type', $investor->investor_type) !!}
+        {!! mailRow('Full Name', '<strong>'.e($investor->full_name).'</strong>') !!}
+        {!! mailRow('Reference', e($investor->reference_number)) !!}
+        {!! mailRow('Date of Birth', e($investor->date_of_birth?->format('d M Y'))) !!}
+        {!! mailRow('BVN / RC No.', e($investor->bvn_rc_number)) !!}
+        {!! mailRow('Tax ID (TIN)', e($investor->tax_id)) !!}
+        {!! mailRow('Investor Type', e($investor->investor_type)) !!}
       </table>
     </div>
 
@@ -49,13 +49,13 @@
     <div style="margin-bottom:20px;border-radius:10px;overflow:hidden;box-shadow:0 2px 14px rgba(216,27,122,0.09)">
       <div style="background:linear-gradient(135deg,#c0105a,#FF5487);padding:10px 18px"><span style="font-size:10.5px;font-weight:800;color:rgba(255,255,255,0.92);text-transform:uppercase;letter-spacing:0.12em">📞 Contact Details</span></div>
       <table style="width:100%;border-collapse:collapse;background:#fff">
-        {!! mailRow('Email', '<a href="mailto:'.$investor->user->email.'" style="color:#c0105a;font-weight:700;text-decoration:none">'.$investor->user->email.'</a>') !!}
-        {!! mailRow('Phone', $investor->phone_primary) !!}
-        {!! mailRow('Alt Phone', $investor->phone_alternate) !!}
-        {!! mailRow('Address', $investor->address) !!}
-        {!! mailRow('City / State', $investor->city_state) !!}
-        {!! mailRow('Country', $investor->country) !!}
-        {!! mailRow('Preferred Comms', $investor->communication_prefs) !!}
+        {!! mailRow('Email', '<a href="mailto:'.e($investor->user->email).'" style="color:#c0105a;font-weight:700;text-decoration:none">'.e($investor->user->email).'</a>') !!}
+        {!! mailRow('Phone', e($investor->phone_primary)) !!}
+        {!! mailRow('Alt Phone', e($investor->phone_alternate)) !!}
+        {!! mailRow('Address', e($investor->address)) !!}
+        {!! mailRow('City / State', e($investor->city_state)) !!}
+        {!! mailRow('Country', e($investor->country)) !!}
+        {!! mailRow('Preferred Comms', e($investor->communication_prefs)) !!}
       </table>
     </div>
 
@@ -63,11 +63,11 @@
     <div style="margin-bottom:20px;border-radius:10px;overflow:hidden;box-shadow:0 2px 14px rgba(216,27,122,0.09)">
       <div style="background:linear-gradient(135deg,#c0105a,#FF5487);padding:10px 18px"><span style="font-size:10.5px;font-weight:800;color:rgba(255,255,255,0.92);text-transform:uppercase;letter-spacing:0.12em">💰 Investment Details</span></div>
       <table style="width:100%;border-collapse:collapse;background:#fff">
-        {!! mailRow('Tier', '<strong style="color:#c0105a;font-size:15px">'.$investor->tier.'</strong>') !!}
-        {!! mailRow('Amount', $investor->tierAmount()) !!}
-        {!! mailRow('Custom Amount', $investor->custom_amount) !!}
-        {!! mailRow('Payment Method', $investor->payment_method) !!}
-        {!! mailRow('Notes', $investor->notes) !!}
+        {!! mailRow('Tier', '<strong style="color:#c0105a;font-size:15px">'.e($investor->tier).'</strong>') !!}
+        {!! mailRow('Amount', e($investor->tierAmount())) !!}
+        {!! mailRow('Custom Amount', e($investor->custom_amount)) !!}
+        {!! mailRow('Payment Method', e($investor->payment_method)) !!}
+        {!! mailRow('Notes', e($investor->notes)) !!}
       </table>
     </div>
 
