@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — Mambilla Legacy Farms</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<!-- SheetJS for Excel/CSV export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --pk:#FF5487;--pkd:#D81B7A;--ink:#1A0A12;
+    --bg:#0e0812;--card:#1c1120;--border:rgba(255,255,255,.07);
+    --t1:rgba(255,255,255,.88);--t2:rgba(255,255,255,.45);--t3:rgba(255,255,255,.22);
+  }
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh}
+
+  /* ── GATE ── */
+  #gate{
+    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(160deg,#0e0812 0%,#1e0a18 100%);z-index:999;padding:1.5rem
+  }
+  .gate-card{
+    background:var(--card);border:1px solid var(--border);border-radius:20px;
+    padding:2.5rem 2rem;width:100%;max-width:380px;text-align:center
+  }
+  .gate-logo{width:52px;height:52px;background:linear-gradient(135deg,var(--pkd),var(--pk));border-radius:14px;display:grid;place-items:center;font-size:1.4rem;margin:0 auto 1.2rem}
+  .gate-card h1{font-size:1.3rem;font-weight:700;margin-bottom:.3rem}
+  .gate-card p{font-size:.8rem;color:var(--t2);margin-bottom:1.8rem;line-height:1.6}
+  .gate-input{
+    width:100%;background:rgba(255,255,255,.05);border:1.5px solid var(--border);
+    border-radius:10px;padding:.8rem 1rem;color:var(--t1);font-size:.9rem;
+    font-family:'Plus Jakarta Sans',sans-serif;outline:none;margin-bottom:.9rem;
+    transition:border-color .2s
+  }
+  .gate-input:focus{border-color:var(--pk)}
+  .gate-input::placeholder{color:var(--t3)}
+  .gate-btn{
+    width:100%;background:linear-gradient(135deg,var(--pkd),var(--pk));border:none;
+    border-radius:10px;padding:.85rem;color:#fff;font-size:.9rem;font-weight:700;
+    cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:opacity .2s
+  }
+  .gate-btn:hover{opacity:.88}
+  .gate-err{font-size:.78rem;color:#ff6b6b;margin-top:.6rem;display:none}
+
+  /* ── DASHBOARD ── */
+  #dash{display:none;padding:1.5rem;max-width:1400px;margin:0 auto}
+
+  /* Top bar */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;
+    margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)
+  }
+  .topbar-left{display:flex;align-items:center;gap:.85rem}
+  .topbar-logo{width:40px;height:40px;background:linear-gradient(135deg,var(--pkd),var(--pk));border-radius:11px;display:grid;place-items:center;font-size:1.1rem;flex-shrink:0}
+  .topbar-title{font-size:1.1rem;font-weight:700}
+  .topbar-sub{font-size:.72rem;color:var(--t2);margin-top:.1rem}
+
+  /* Stats */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.2rem}
+  .stat-val{font-size:1.9rem;font-weight:800;color:var(--pk);line-height:1}
+  .stat-label{font-size:.72rem;color:var(--t2);margin-top:.35rem;text-transform:uppercase;letter-spacing:.07em}
+
+  /* Toolbar */
+  .toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1.2rem}
+  .toolbar-left{display:flex;gap:.6rem;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1rem;border-radius:8px;
+    font-size:.8rem;font-weight:600;cursor:pointer;border:none;font-family:'Plus Jakarta Sans',sans-serif;
+    transition:opacity .2s,background .2s
+  }
+  .btn-primary{background:linear-gradient(135deg,var(--pkd),var(--pk));color:#fff}
+  .btn-ghost{background:rgba(255,255,255,.06);color:var(--t1);border:1px solid var(--border)}
+  .btn-danger{background:rgba(255,80,80,.12);color:#ff8080;border:1px solid rgba(255,80,80,.2)}
+  .btn:hover{opacity:.82}
+  .search{
+    background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:8px;
+    padding:.5rem .85rem;color:var(--t1);font-size:.82rem;font-family:'Plus Jakarta Sans',sans-serif;
+    outline:none;width:220px;transition:border-color .2s
+  }
+  .search:focus{border-color:var(--pk)}
+  .search::placeholder{color:var(--t3)}
+
+  /* Table */
+  .tbl-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--border)}
+  table{width:100%;border-collapse:collapse;font-size:.8rem}
+  thead th{
+    background:#130a18;padding:.75rem 1rem;text-align:left;font-size:.67rem;font-weight:700;
+    color:var(--t2);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;
+    border-bottom:1px solid var(--border)
+  }
+  tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+  tbody tr:last-child{border-bottom:none}
+  tbody tr:hover{background:rgba(255,84,135,.04)}
+  td{padding:.72rem 1rem;color:var(--t1);vertical-align:top;white-space:nowrap}
+  td.wrap{white-space:normal;min-width:160px;max-width:220px}
+  .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.68rem;font-weight:700;background:rgba(255,84,135,.15);color:var(--pk)}
+  .ts{font-size:.72rem;color:var(--t2)}
+  .empty{padding:3rem;text-align:center;color:var(--t2)}
+
+  /* Pagination */
+  .pager{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;flex-wrap:wrap;gap:.5rem}
+  .pager-info{font-size:.78rem;color:var(--t2)}
+  .pager-btns{display:flex;gap:.4rem}
+
+  /* Confirm overlay */
+  .confirm-ov{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:999;padding:1rem}
+  .confirm-ov.open{display:flex}
+  .confirm-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;max-width:360px;width:100%;text-align:center}
+  .confirm-box h3{font-size:1.1rem;margin-bottom:.6rem}
+  .confirm-box p{font-size:.83rem;color:var(--t2);line-height:1.65;margin-bottom:1.4rem}
+  .confirm-row{display:flex;gap:.7rem;justify-content:center}
+
+  @media(max-width:600px){
+    .search{width:100%}
+    .topbar{flex-direction:column;align-items:flex-start}
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PASSWORD GATE
+     ════════════════════════════════════════════════════════════ -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">🔐</div>
+    <h1>Admin Access</h1>
+    <p>Mambilla Legacy Farms · Investor Registry<br>Authorised personnel only</p>
+    <form onsubmit="checkPassword(event)">
+      <input class="gate-input" type="password" id="pw" placeholder="Enter admin password" autocomplete="current-password"/>
+      <button class="gate-btn" type="submit">Unlock Dashboard →</button>
+      <div class="gate-err" id="gate-err">Incorrect password. Try again.</div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     DASHBOARD (hidden until authenticated)
+     ════════════════════════════════════════════════════════════ -->
+<div id="dash">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">🐄</div>
+      <div>
+        <div class="topbar-title">Investor Registry</div>
+        <div class="topbar-sub">Mambilla Legacy Farms · Admin Dashboard</div>
+      </div>
+    </div>
+    <button class="btn btn-ghost" onclick="logout()">🔒 Lock</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-val" id="stat-total">0</div><div class="stat-label">Total Registrations</div></div>
+    <div class="stat"><div class="stat-val" id="stat-today">0</div><div class="stat-label">Registered Today</div></div>
+    <div class="stat"><div class="stat-val" id="stat-tier">—</div><div class="stat-label">Most Popular Tier</div></div>
+    <div class="stat"><div class="stat-val" id="stat-latest">—</div><div class="stat-label">Latest Registration</div></div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <button class="btn btn-primary" onclick="downloadExcel()">⬇ Export Excel</button>
+      <button class="btn btn-ghost" onclick="downloadCSV()">⬇ Export CSV</button>
+      <button class="btn btn-danger" onclick="openClearConfirm()">🗑 Clear All</button>
+    </div>
+    <input class="search" type="search" id="search" placeholder="Search by name, email, tier…" oninput="applyFilter()"/>
+  </div>
+
+  <!-- Table -->
+  <div class="tbl-wrap">
+    <table id="reg-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Timestamp</th>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Tier</th>
+          <th>Investor Type</th>
+          <th>Country</th>
+          <th>Payment Method</th>
+          <th>BVN / RC No.</th>
+          <th>Address</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="reg-body">
+        <tr><td colspan="12" class="empty">No registrations yet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pager">
+    <div class="pager-info" id="pager-info"></div>
+    <div class="pager-btns">
+      <button class="btn btn-ghost" id="prev-btn" onclick="changePage(-1)">← Prev</button>
+      <button class="btn btn-ghost" id="next-btn" onclick="changePage(1)">Next →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Clear confirm dialog -->
+<div class="confirm-ov" id="confirm-ov">
+  <div class="confirm-box">
+    <h3>Clear all registrations?</h3>
+    <p>This will permanently delete all <strong id="confirm-count">0</strong> stored registrations from this browser. This cannot be undone.</p>
+    <div class="confirm-row">
+      <button class="btn btn-danger" onclick="clearAll()">Yes, delete all</button>
+      <button class="btn btn-ghost" onclick="closeClearConfirm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// ⚙ CONFIGURATION
+// ════════════════════════════════════════════════════════════════
+
+// ← CHANGE THIS to your preferred admin password before going live
+const ADMIN_PASSWORD = 'mambilla2025';
+
+// Must match the key used in contact.html
+const REG_KEY = 'mlf_investor_registrations';
+
+// ════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════
+let allRecords  = [];
+let filtered    = [];
+let currentPage = 1;
+const PAGE_SIZE = 20;
+
+// ════════════════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════════════════
+function checkPassword(e) {
+  e.preventDefault();
+  const val = document.getElementById('pw').value;
+  if (val === ADMIN_PASSWORD) {
+    sessionStorage.setItem('mlf_admin', '1');
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('dash').style.display  = 'block';
+    loadData();
+  } else {
+    document.getElementById('gate-err').style.display = 'block';
+    document.getElementById('pw').value = '';
+    document.getElementById('pw').focus();
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('mlf_admin');
+  location.reload();
+}
+
+// Auto-unlock if already authenticated this session
+if (sessionStorage.getItem('mlf_admin') === '1') {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('dash').style.display  = 'block';
+}
+
+// ════════════════════════════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════════════════════════════
+function loadData() {
+  allRecords = JSON.parse(localStorage.getItem(REG_KEY) || '[]');
+  applyFilter();
+  renderStats();
+}
+
+function applyFilter() {
+  const q = (document.getElementById('search').value || '').toLowerCase().trim();
+  filtered = q
+    ? allRecords.filter(r =>
+        Object.values(r).some(v => String(v).toLowerCase().includes(q))
+      )
+    : [...allRecords];
+  currentPage = 1;
+  renderTable();
+}
+
+// ════════════════════════════════════════════════════════════════
+// STATS
+// ════════════════════════════════════════════════════════════════
+function renderStats() {
+  document.getElementById('stat-total').textContent = allRecords.length;
+
+  const today = new Date().toLocaleDateString('en-NG');
+  const todayCount = allRecords.filter(r => r['Timestamp'] && r['Timestamp'].startsWith(today)).length;
+  document.getElementById('stat-today').textContent = todayCount;
+
+  // Most popular tier
+  const tierCounts = {};
+  allRecords.forEach(r => { if (r['Tier']) tierCounts[r['Tier']] = (tierCounts[r['Tier']] || 0) + 1; });
+  const topTier = Object.entries(tierCounts).sort((a,b) => b[1]-a[1])[0];
+  document.getElementById('stat-tier').textContent = topTier ? topTier[0] : '—';
+
+  // Latest
+  const last = allRecords[allRecords.length - 1];
+  document.getElementById('stat-latest').textContent = last
+    ? last['Full Name'].split(' ')[0]
+    : '—';
+}
+
+// ════════════════════════════════════════════════════════════════
+// TABLE
+// ════════════════════════════════════════════════════════════════
+function renderTable() {
+  const body = document.getElementById('reg-body');
+  const total = filtered.length;
+
+  if (!total) {
+    body.innerHTML = `<tr><td colspan="12" class="empty">${
+      allRecords.length ? 'No results match your search.' : 'No registrations stored yet.'
+    }</td></tr>`;
+    document.getElementById('pager-info').textContent = '';
+    document.getElementById('prev-btn').disabled = true;
+    document.getElementById('next-btn').disabled = true;
+    return;
+  }
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  currentPage = Math.min(currentPage, totalPages);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const page  = filtered.slice(start, start + PAGE_SIZE);
+
+  body.innerHTML = page.map((r, i) => `
+    <tr>
+      <td class="ts">${start + i + 1}</td>
+      <td class="ts">${esc(r['Timestamp'])}</td>
+      <td><strong>${esc(r['Full Name'])}</strong></td>
+      <td><a href="mailto:${esc(r['Email'])}" style="color:var(--pk);text-decoration:none">${esc(r['Email'])}</a></td>
+      <td>${esc(r['Phone'])}</td>
+      <td><span class="badge">${esc(r['Tier'])}</span></td>
+      <td>${esc(r['Investor Type'])}</td>
+      <td>${esc(r['Country'])}</td>
+      <td>${esc(r['Payment Method'])}</td>
+      <td class="ts">${esc(r['BVN / RC No.'])}</td>
+      <td class="wrap ts">${esc(r['Address'])}${r['City / State'] !== '—' ? ', ' + esc(r['City / State']) : ''}</td>
+      <td class="wrap ts">${esc(r['Notes'])}</td>
+    </tr>`).join('');
+
+  document.getElementById('pager-info').textContent =
+    `Showing ${start + 1}–${Math.min(start + PAGE_SIZE, total)} of ${total} registration${total !== 1 ? 's' : ''}`;
+  document.getElementById('prev-btn').disabled = currentPage <= 1;
+  document.getElementById('next-btn').disabled = currentPage >= totalPages;
+}
+
+function changePage(dir) {
+  currentPage += dir;
+  renderTable();
+}
+
+function esc(v) {
+  return String(v ?? '—').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ════════════════════════════════════════════════════════════════
+// EXCEL EXPORT
+// ════════════════════════════════════════════════════════════════
+function downloadExcel() {
+  if (!allRecords.length) { alert('No registrations to export.'); return; }
+  const headers = Object.keys(allRecords[0]);
+  const rows = allRecords.map(r => headers.map(h => r[h]));
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  ws['!cols'] = headers.map(h => ({ wch: Math.max(h.length + 4, 20) }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Investor Registrations');
+  const date = new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb, `Mambilla_Investors_${date}.xlsx`);
+}
+
+// ════════════════════════════════════════════════════════════════
+// CSV EXPORT
+// ════════════════════════════════════════════════════════════════
+function downloadCSV() {
+  if (!allRecords.length) { alert('No registrations to export.'); return; }
+  const headers = Object.keys(allRecords[0]);
+  const csvRows = [
+    headers.map(csvCell).join(','),
+    ...allRecords.map(r => headers.map(h => csvCell(r[h])).join(','))
+  ];
+  const blob = new Blob([csvRows.join('\r\n')], {type: 'text/csv;charset=utf-8;'});
+  const url  = URL.createObjectURL(blob);
+  const a    = Object.assign(document.createElement('a'), {
+    href: url,
+    download: `Mambilla_Investors_${new Date().toISOString().slice(0,10)}.csv`
+  });
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function csvCell(v) {
+  const s = String(v ?? '');
+  return /[",\r\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
+}
+
+// ════════════════════════════════════════════════════════════════
+// CLEAR ALL
+// ════════════════════════════════════════════════════════════════
+function openClearConfirm() {
+  document.getElementById('confirm-count').textContent = allRecords.length;
+  document.getElementById('confirm-ov').classList.add('open');
+}
+function closeClearConfirm() {
+  document.getElementById('confirm-ov').classList.remove('open');
+}
+function clearAll() {
+  localStorage.removeItem(REG_KEY);
+  closeClearConfirm();
+  loadData();
+}
+
+// ════════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════════
+if (sessionStorage.getItem('mlf_admin') === '1') loadData();
+</script>
+</body>
+</html>
