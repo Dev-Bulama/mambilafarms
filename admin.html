@@ -7,8 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<!-- SheetJS for Excel/CSV export -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   :root{
@@ -156,101 +154,58 @@
     <button class="btn btn-ghost" onclick="logout()">🔒 Lock</button>
   </div>
 
-  <!-- Stats -->
-  <div class="stats">
-    <div class="stat"><div class="stat-val" id="stat-total">0</div><div class="stat-label">Total Registrations</div></div>
-    <div class="stat"><div class="stat-val" id="stat-today">0</div><div class="stat-label">Registered Today</div></div>
-    <div class="stat"><div class="stat-val" id="stat-tier">—</div><div class="stat-label">Most Popular Tier</div></div>
-    <div class="stat"><div class="stat-val" id="stat-latest">—</div><div class="stat-label">Latest Registration</div></div>
-  </div>
-
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <div class="toolbar-left">
-      <button class="btn btn-primary" onclick="downloadExcel()">⬇ Export Excel</button>
-      <button class="btn btn-ghost" onclick="downloadCSV()">⬇ Export CSV</button>
-      <button class="btn btn-danger" onclick="openClearConfirm()">🗑 Clear All</button>
+  <!-- Info card -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.75rem;max-width:640px">
+    <div style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.4rem">
+      <div style="font-size:1.6rem;flex-shrink:0">📬</div>
+      <div>
+        <div style="font-weight:700;font-size:1rem;margin-bottom:.35rem">Your inbox is the registry</div>
+        <div style="font-size:.83rem;color:var(--t2);line-height:1.7">
+          For investor privacy, registration data is never stored in the browser.
+          Every submission fires an instant email to your admin address(es) containing
+          the full investor record. Your email inbox is your searchable, permanent database.
+        </div>
+      </div>
     </div>
-    <input class="search" type="search" id="search" placeholder="Search by name, email, tier…" oninput="applyFilter()"/>
-  </div>
 
-  <!-- Table -->
-  <div class="tbl-wrap">
-    <table id="reg-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Timestamp</th>
-          <th>Full Name</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Tier</th>
-          <th>Investor Type</th>
-          <th>Country</th>
-          <th>Payment Method</th>
-          <th>BVN / RC No.</th>
-          <th>Address</th>
-          <th>Notes</th>
-        </tr>
-      </thead>
-      <tbody id="reg-body">
-        <tr><td colspan="12" class="empty">No registrations yet.</td></tr>
-      </tbody>
-    </table>
-  </div>
+    <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.65rem;font-size:.82rem">
+      <div style="display:flex;gap:.75rem;align-items:flex-start">
+        <span style="color:var(--pk);font-weight:700;flex-shrink:0">1.</span>
+        <span style="color:var(--t2);line-height:1.6">Each new registration arrives as a styled email with every field — name, BVN, tier, phone, address, and more.</span>
+      </div>
+      <div style="display:flex;gap:.75rem;align-items:flex-start">
+        <span style="color:var(--pk);font-weight:700;flex-shrink:0">2.</span>
+        <span style="color:var(--t2);line-height:1.6">Use your email client's search and labels/folders to organise by tier, date, or investor type.</span>
+      </div>
+      <div style="display:flex;gap:.75rem;align-items:flex-start">
+        <span style="color:var(--pk);font-weight:700;flex-shrink:0">3.</span>
+        <span style="color:var(--t2);line-height:1.6">To build a spreadsheet registry, forward all registration emails to a Google Sheet using <strong style="color:var(--t1)">Google Apps Script</strong>, or manually paste the data — the email contains every field in a clean table format.</span>
+      </div>
+      <div style="display:flex;gap:.75rem;align-items:flex-start">
+        <span style="color:var(--pk);font-weight:700;flex-shrink:0">4.</span>
+        <span style="color:var(--t2);line-height:1.6">For a fully automated registry (live table + CSV export), add a single <strong style="color:var(--t1)">PHP file</strong> to your server and this dashboard can be upgraded with no other backend changes needed.</span>
+      </div>
+    </div>
 
-  <div class="pager">
-    <div class="pager-info" id="pager-info"></div>
-    <div class="pager-btns">
-      <button class="btn btn-ghost" id="prev-btn" onclick="changePage(-1)">← Prev</button>
-      <button class="btn btn-ghost" id="next-btn" onclick="changePage(1)">Next →</button>
+    <div style="margin-top:1.2rem;padding:.75rem 1rem;background:rgba(255,84,135,.07);border:1px solid rgba(255,84,135,.18);border-radius:8px;font-size:.78rem;color:var(--t2);line-height:1.6">
+      <strong style="color:var(--pk)">Why not localStorage?</strong>
+      Browser storage is readable by any visitor via DevTools → Application. Sensitive investor data (BVN, TIN, address) must never sit there.
     </div>
   </div>
 
 </div>
 
-<!-- Clear confirm dialog -->
-<div class="confirm-ov" id="confirm-ov">
-  <div class="confirm-box">
-    <h3>Clear all registrations?</h3>
-    <p>This will permanently delete all <strong id="confirm-count">0</strong> stored registrations from this browser. This cannot be undone.</p>
-    <div class="confirm-row">
-      <button class="btn btn-danger" onclick="clearAll()">Yes, delete all</button>
-      <button class="btn btn-ghost" onclick="closeClearConfirm()">Cancel</button>
-    </div>
-  </div>
-</div>
 
 <script>
-// ════════════════════════════════════════════════════════════════
-// ⚙ CONFIGURATION
-// ════════════════════════════════════════════════════════════════
-
 // ← CHANGE THIS to your preferred admin password before going live
 const ADMIN_PASSWORD = 'mambilla2025';
 
-// Must match the key used in contact.html
-const REG_KEY = 'mlf_investor_registrations';
-
-// ════════════════════════════════════════════════════════════════
-// STATE
-// ════════════════════════════════════════════════════════════════
-let allRecords  = [];
-let filtered    = [];
-let currentPage = 1;
-const PAGE_SIZE = 20;
-
-// ════════════════════════════════════════════════════════════════
-// AUTH
-// ════════════════════════════════════════════════════════════════
 function checkPassword(e) {
   e.preventDefault();
-  const val = document.getElementById('pw').value;
-  if (val === ADMIN_PASSWORD) {
+  if (document.getElementById('pw').value === ADMIN_PASSWORD) {
     sessionStorage.setItem('mlf_admin', '1');
     document.getElementById('gate').style.display = 'none';
     document.getElementById('dash').style.display  = 'block';
-    loadData();
   } else {
     document.getElementById('gate-err').style.display = 'block';
     document.getElementById('pw').value = '';
@@ -263,170 +218,10 @@ function logout() {
   location.reload();
 }
 
-// Auto-unlock if already authenticated this session
 if (sessionStorage.getItem('mlf_admin') === '1') {
   document.getElementById('gate').style.display = 'none';
   document.getElementById('dash').style.display  = 'block';
 }
-
-// ════════════════════════════════════════════════════════════════
-// DATA
-// ════════════════════════════════════════════════════════════════
-function loadData() {
-  allRecords = JSON.parse(localStorage.getItem(REG_KEY) || '[]');
-  applyFilter();
-  renderStats();
-}
-
-function applyFilter() {
-  const q = (document.getElementById('search').value || '').toLowerCase().trim();
-  filtered = q
-    ? allRecords.filter(r =>
-        Object.values(r).some(v => String(v).toLowerCase().includes(q))
-      )
-    : [...allRecords];
-  currentPage = 1;
-  renderTable();
-}
-
-// ════════════════════════════════════════════════════════════════
-// STATS
-// ════════════════════════════════════════════════════════════════
-function renderStats() {
-  document.getElementById('stat-total').textContent = allRecords.length;
-
-  const today = new Date().toLocaleDateString('en-NG');
-  const todayCount = allRecords.filter(r => r['Timestamp'] && r['Timestamp'].startsWith(today)).length;
-  document.getElementById('stat-today').textContent = todayCount;
-
-  // Most popular tier
-  const tierCounts = {};
-  allRecords.forEach(r => { if (r['Tier']) tierCounts[r['Tier']] = (tierCounts[r['Tier']] || 0) + 1; });
-  const topTier = Object.entries(tierCounts).sort((a,b) => b[1]-a[1])[0];
-  document.getElementById('stat-tier').textContent = topTier ? topTier[0] : '—';
-
-  // Latest
-  const last = allRecords[allRecords.length - 1];
-  document.getElementById('stat-latest').textContent = last
-    ? last['Full Name'].split(' ')[0]
-    : '—';
-}
-
-// ════════════════════════════════════════════════════════════════
-// TABLE
-// ════════════════════════════════════════════════════════════════
-function renderTable() {
-  const body = document.getElementById('reg-body');
-  const total = filtered.length;
-
-  if (!total) {
-    body.innerHTML = `<tr><td colspan="12" class="empty">${
-      allRecords.length ? 'No results match your search.' : 'No registrations stored yet.'
-    }</td></tr>`;
-    document.getElementById('pager-info').textContent = '';
-    document.getElementById('prev-btn').disabled = true;
-    document.getElementById('next-btn').disabled = true;
-    return;
-  }
-
-  const totalPages = Math.ceil(total / PAGE_SIZE);
-  currentPage = Math.min(currentPage, totalPages);
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const page  = filtered.slice(start, start + PAGE_SIZE);
-
-  body.innerHTML = page.map((r, i) => `
-    <tr>
-      <td class="ts">${start + i + 1}</td>
-      <td class="ts">${esc(r['Timestamp'])}</td>
-      <td><strong>${esc(r['Full Name'])}</strong></td>
-      <td><a href="mailto:${esc(r['Email'])}" style="color:var(--pk);text-decoration:none">${esc(r['Email'])}</a></td>
-      <td>${esc(r['Phone'])}</td>
-      <td><span class="badge">${esc(r['Tier'])}</span></td>
-      <td>${esc(r['Investor Type'])}</td>
-      <td>${esc(r['Country'])}</td>
-      <td>${esc(r['Payment Method'])}</td>
-      <td class="ts">${esc(r['BVN / RC No.'])}</td>
-      <td class="wrap ts">${esc(r['Address'])}${r['City / State'] !== '—' ? ', ' + esc(r['City / State']) : ''}</td>
-      <td class="wrap ts">${esc(r['Notes'])}</td>
-    </tr>`).join('');
-
-  document.getElementById('pager-info').textContent =
-    `Showing ${start + 1}–${Math.min(start + PAGE_SIZE, total)} of ${total} registration${total !== 1 ? 's' : ''}`;
-  document.getElementById('prev-btn').disabled = currentPage <= 1;
-  document.getElementById('next-btn').disabled = currentPage >= totalPages;
-}
-
-function changePage(dir) {
-  currentPage += dir;
-  renderTable();
-}
-
-function esc(v) {
-  return String(v ?? '—').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// ════════════════════════════════════════════════════════════════
-// EXCEL EXPORT
-// ════════════════════════════════════════════════════════════════
-function downloadExcel() {
-  if (!allRecords.length) { alert('No registrations to export.'); return; }
-  const headers = Object.keys(allRecords[0]);
-  const rows = allRecords.map(r => headers.map(h => r[h]));
-  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-  ws['!cols'] = headers.map(h => ({ wch: Math.max(h.length + 4, 20) }));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Investor Registrations');
-  const date = new Date().toISOString().slice(0,10);
-  XLSX.writeFile(wb, `Mambilla_Investors_${date}.xlsx`);
-}
-
-// ════════════════════════════════════════════════════════════════
-// CSV EXPORT
-// ════════════════════════════════════════════════════════════════
-function downloadCSV() {
-  if (!allRecords.length) { alert('No registrations to export.'); return; }
-  const headers = Object.keys(allRecords[0]);
-  const csvRows = [
-    headers.map(csvCell).join(','),
-    ...allRecords.map(r => headers.map(h => csvCell(r[h])).join(','))
-  ];
-  const blob = new Blob([csvRows.join('\r\n')], {type: 'text/csv;charset=utf-8;'});
-  const url  = URL.createObjectURL(blob);
-  const a    = Object.assign(document.createElement('a'), {
-    href: url,
-    download: `Mambilla_Investors_${new Date().toISOString().slice(0,10)}.csv`
-  });
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-function csvCell(v) {
-  const s = String(v ?? '');
-  return /[",\r\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
-}
-
-// ════════════════════════════════════════════════════════════════
-// CLEAR ALL
-// ════════════════════════════════════════════════════════════════
-function openClearConfirm() {
-  document.getElementById('confirm-count').textContent = allRecords.length;
-  document.getElementById('confirm-ov').classList.add('open');
-}
-function closeClearConfirm() {
-  document.getElementById('confirm-ov').classList.remove('open');
-}
-function clearAll() {
-  localStorage.removeItem(REG_KEY);
-  closeClearConfirm();
-  loadData();
-}
-
-// ════════════════════════════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════════════════════════════
-if (sessionStorage.getItem('mlf_admin') === '1') loadData();
 </script>
 </body>
 </html>

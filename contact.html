@@ -172,9 +172,8 @@
    FLOW
    ─────────────────────────────────────────────────────────────────
    1. User submits form → sees confirmation popup only
-   2. Registration is silently saved to browser localStorage
-   3. Admin receives a styled email notification (via EmailJS)
-   4. Site owner views/exports all registrations at:  /admin.html
+   2. Admin receives a styled email notification (via EmailJS)
+   3. NO data is written to localStorage or anywhere in the browser
    ================================================================ */
 
 
@@ -209,9 +208,6 @@ const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID_HERE';   // ← Email Templates ta
 
 // Initialize EmailJS
 emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-
-// localStorage key
-const REG_KEY = 'mlf_investor_registrations';
 
 
 // ================================================================
@@ -257,12 +253,8 @@ async function fs(e) {
     'Notes':          document.getElementById('fno').value || '—',
   };
 
-  // Silently persist to localStorage (accessible only via /admin.html)
-  const all = JSON.parse(localStorage.getItem(REG_KEY) || '[]');
-  all.push(data);
-  localStorage.setItem(REG_KEY, JSON.stringify(all));
-
   // Send email notifications to admin (non-blocking)
+  // No data is written to localStorage — nothing persists in the browser
   sendNotification(data).catch(err =>
     console.warn('[MLF] Email notification failed:', err.text || err.message || err)
   );
