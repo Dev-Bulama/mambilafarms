@@ -26,15 +26,29 @@
 <!-- Status update -->
 <div class="card">
   <div class="card-title">Update Status</div>
-  <form method="POST" action="{{ route('admin.investors.status', $investor) }}" style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+  <form method="POST" action="{{ route('admin.investors.status', $investor) }}" style="display:flex;align-items:flex-end;gap:.75rem;flex-wrap:wrap">
     @csrf @method('PATCH')
-    <select name="status" class="form-control" style="width:200px">
-      @foreach(['pending','approved','active','suspended','completed'] as $s)
-        <option value="{{ $s }}" {{ $investor->status === $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
-      @endforeach
-    </select>
-    <button type="submit" class="btn btn-primary">Update Status</button>
+    <div>
+      <label class="form-label" style="margin-bottom:.4rem">New Status</label>
+      <select name="status" class="form-control" style="width:190px">
+        @foreach(['pending','approved','active','suspended','completed'] as $s)
+          <option value="{{ $s }}" {{ $investor->status === $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
+        @endforeach
+      </select>
+    </div>
+    <div style="display:flex;align-items:center;gap:.45rem;padding-bottom:.45rem">
+      <input type="checkbox" name="notify_investor" value="1" id="notify_cb" checked
+             style="width:15px;height:15px;accent-color:var(--pk);cursor:pointer"/>
+      <label for="notify_cb" style="font-size:.8rem;color:var(--t2);cursor:pointer;white-space:nowrap">
+        Email investor about this change
+      </label>
+    </div>
+    <button type="submit" class="btn btn-primary" style="padding-bottom:.47rem">Update Status</button>
   </form>
+  <div style="margin-top:.75rem;padding:.65rem .85rem;background:rgba(255,255,255,.03);border-radius:8px;font-size:.72rem;color:var(--t3);line-height:1.65">
+    Status-change emails are sent to <strong style="color:var(--t2)">{{ $investor->user->email }}</strong>.
+    Uncheck the box to update silently.
+  </div>
 </div>
 
 <!-- Detail sections -->
