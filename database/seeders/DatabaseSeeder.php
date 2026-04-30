@@ -38,6 +38,15 @@ class DatabaseSeeder extends Seeder
             'smtp_encryption'          => 'tls',
             'smtp_from_address'        => 'noreply@legacyfarms.ng',
             'smtp_from_name'           => 'Mambilla Legacy Farms',
+            // Site content
+            'site_ann_1'               => 'A SAB Foundation Initiative',
+            'site_ann_2'               => 'Promoted by Successory Nigeria Ltd',
+            'site_ann_3'               => 'Technical Partner: Farm Alert Ltd',
+            'site_hero_eyebrow'        => "Nigeria's Cattle Revolution",
+            'site_hero_title'          => 'Build Lasting Wealth Through Livestock',
+            'site_hero_body'           => 'Join a structured 5-year cattle investment programme delivering 34–300% returns, backed by an SPV legal structure, livestock insurance and quarterly reporting.',
+            // Chatbot / custom scripts
+            'chatbot_script'           => '',
         ];
 
         foreach ($defaults as $key => $value) {

@@ -18,6 +18,11 @@ class SettingsController extends Controller
         'company_name', 'company_email', 'company_phone', 'company_address',
         // Notification
         'admin_notification_emails',
+        // Site Content
+        'site_ann_1', 'site_ann_2', 'site_ann_3',
+        'site_hero_eyebrow', 'site_hero_title', 'site_hero_body',
+        // Chatbot / Scripts
+        'chatbot_script',
     ];
 
     public function show()
@@ -37,6 +42,10 @@ class SettingsController extends Controller
 
         foreach ($this->settingKeys as $key) {
             if ($request->has($key)) {
+                // Never overwrite smtp_password with a blank value (field is always empty on load)
+                if ($key === 'smtp_password' && $request->input($key) === '') {
+                    continue;
+                }
                 Setting::set($key, $request->input($key));
             }
         }

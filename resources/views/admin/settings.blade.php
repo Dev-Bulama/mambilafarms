@@ -6,10 +6,10 @@
 <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data">
 @csrf
 
-<!-- SMTP -->
+{{-- SMTP --}}
 <div class="card">
   <div class="card-title">📧 SMTP / Email Configuration</div>
-  <p style="font-size:.78rem;color:var(--t2);margin-bottom:1.25rem;line-height:1.65">These settings control how notification and confirmation emails are sent. Your SMTP credentials are stored encrypted in the database and never exposed to the browser.</p>
+  <p style="font-size:.78rem;color:var(--t2);margin-bottom:1.25rem;line-height:1.65">Controls how notification and confirmation emails are sent. Credentials are stored in the database and never exposed to the browser.</p>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem">
     <div class="form-group">
       <label class="form-label">SMTP Host</label>
@@ -55,7 +55,7 @@
   </div>
 </div>
 
-<!-- Company Info -->
+{{-- Company Info --}}
 <div class="card">
   <div class="card-title">🏢 Company Information</div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem">
@@ -64,8 +64,9 @@
       <input class="form-control" type="text" name="company_name" value="{{ $settings['company_name'] ?? '' }}" placeholder="Mambilla Legacy Farms"/>
     </div>
     <div class="form-group">
-      <label class="form-label">Company Email</label>
+      <label class="form-label">Public Contact Email</label>
       <input class="form-control" type="email" name="company_email" value="{{ $settings['company_email'] ?? '' }}" placeholder="invest@legacyfarms.ng"/>
+      <div style="font-size:.68rem;color:var(--t2);margin-top:.25rem">Shown in site footer and contact page.</div>
     </div>
     <div class="form-group">
       <label class="form-label">Company Phone</label>
@@ -78,7 +79,46 @@
   </div>
 </div>
 
-<!-- Logo -->
+{{-- Site Content --}}
+<div class="card">
+  <div class="card-title">✏️ Site Content</div>
+  <p style="font-size:.78rem;color:var(--t2);margin-bottom:1.25rem;line-height:1.65">Update the announcement bar and hero section text shown on the homepage.</p>
+
+  <div style="margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
+    <div style="font-size:.7rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">📢 Announcement Bar (desktop top strip)</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem">
+      <div class="form-group">
+        <label class="form-label">Segment 1</label>
+        <input class="form-control" type="text" name="site_ann_1" value="{{ $settings['site_ann_1'] ?? 'A SAB Foundation Initiative' }}"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Segment 2</label>
+        <input class="form-control" type="text" name="site_ann_2" value="{{ $settings['site_ann_2'] ?? 'Promoted by Successory Nigeria Ltd' }}"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Segment 3</label>
+        <input class="form-control" type="text" name="site_ann_3" value="{{ $settings['site_ann_3'] ?? 'Technical Partner: Farm Alert Ltd' }}"/>
+      </div>
+    </div>
+  </div>
+
+  <div style="font-size:.7rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">🦸 Homepage Hero Section</div>
+  <div class="form-group">
+    <label class="form-label">Eyebrow / Chip Text</label>
+    <input class="form-control" type="text" name="site_hero_eyebrow" value="{{ $settings['site_hero_eyebrow'] ?? "Nigeria's Cattle Revolution" }}" placeholder="Nigeria's Cattle Revolution"/>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Hero Headline</label>
+    <input class="form-control" type="text" name="site_hero_title" value="{{ $settings['site_hero_title'] ?? 'Build Lasting Wealth Through Livestock' }}" placeholder="Build Lasting Wealth Through Livestock"/>
+    <div style="font-size:.68rem;color:var(--t2);margin-top:.25rem">Plain text only. The first sentence will be displayed as the headline.</div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Hero Body Text</label>
+    <textarea class="form-control" name="site_hero_body" rows="3" placeholder="Short description shown in the hero section...">{{ $settings['site_hero_body'] ?? '' }}</textarea>
+  </div>
+</div>
+
+{{-- Logo --}}
 <div class="card">
   <div class="card-title">🖼 Site Logo</div>
   @if(!empty($settings['company_logo_path']))
@@ -91,6 +131,21 @@
     <label class="form-label">Upload Logo</label>
     <input class="form-control" type="file" name="logo" accept="image/*" style="cursor:pointer"/>
     <div style="font-size:.68rem;color:var(--t2);margin-top:.3rem">PNG, JPG or SVG · Max 2MB</div>
+  </div>
+</div>
+
+{{-- Chatbot / Custom Scripts --}}
+<div class="card">
+  <div class="card-title">🤖 Chatbot &amp; Custom Scripts</div>
+  <p style="font-size:.78rem;color:var(--t2);margin-bottom:1rem;line-height:1.65">Paste any third-party script here (chatbot widget, analytics, etc.). It will be injected just before the closing <code style="background:rgba(255,255,255,.06);padding:.1rem .35rem;border-radius:4px;font-size:.75rem">&lt;/body&gt;</code> tag on all public pages.</p>
+  <div class="form-group">
+    <label class="form-label">Custom Script / Chatbot Embed Code</label>
+    <textarea class="form-control" name="chatbot_script" rows="6"
+      placeholder="<!-- Paste your chatbot or custom script here, e.g: -->&#10;<script src=&quot;https://cdn.example.com/widget.js&quot;></script>"
+      style="font-family:monospace;font-size:.8rem">{{ $settings['chatbot_script'] ?? '' }}</textarea>
+    <div style="font-size:.68rem;color:rgba(231,76,60,.7);margin-top:.35rem;display:flex;align-items:center;gap:.4rem">
+      ⚠️ Only paste scripts from trusted sources. Raw HTML/JavaScript is injected as-is.
+    </div>
   </div>
 </div>
 
