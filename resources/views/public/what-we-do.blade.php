@@ -1,0 +1,66 @@
+@extends('layouts.public')
+@php $page = 'wwd'; @endphp
+@section('title', 'What We Do — Mambilla Legacy Farms')
+@section('hero')
+<div class="page-top">
+  <div class="pb" style="background-image:url('https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=1600&q=80')">
+    <div class="pbc">
+      <div class="chip" style="color:var(--pk)">Operations</div>
+      <h1 style="font-size:clamp(2rem,6vw,3.8rem);color:#fff;font-weight:600;line-height:1.1;margin-top:.4rem">What We Do</h1>
+      <p style="color:rgba(255,255,255,.65);max-width:440px;line-height:1.72;margin-top:.75rem;font-size:.92rem">Three integrated revenue streams delivering consistent, compounding returns from Year 3.</p>
+    </div>
+  </div>
+  <div class="stripe"></div>
+</div>
+@endsection
+@section('content')
+@foreach([
+  ['🥛','Dairy &amp; Artisan Products','#fff','var(--pklx)',
+   'Our Friesian crossbreeds produce premium A2 milk processed into fresh milk, artisan yogurt, aged cheese, cultured butter and pure ghee for the Nigerian premium market and ECOWAS exports.',
+   ['Fresh &amp; UHT Milk','Artisan Yogurt &amp; Kefir','Premium Aged Cheese','Cultured Butter &amp; Ghee'],
+   'Quarterly payouts from Year 3'],
+  ['🥩','Premium Beef &amp; Abattoir','var(--pklx)','#fff',
+   'A modern certified abattoir processes feedlot-finished cattle into branded premium cuts for top-tier Nigerian restaurants, hotels and supermarket chains, with export capability to ECOWAS markets.',
+   ['Feedlot Finishing Programme','Branded Premium Cuts','Hotel &amp; Restaurant Supply','ECOWAS Regional Export'],
+   'Event payouts from Year 3'],
+  ['🧬','AI Breeding &amp; Superior Genetics','#fff','var(--pklx)',
+   'Our AI-assisted breeding programme crosses indigenous Adamawa Gudali with Friesian and Simmental genetics to produce F1 crossbreeds sold to smallholder farmers and government programmes across Nigeria.',
+   ['Adamawa Gudali × Friesian F1','× Simmental High-growth Crosses','AI Semen Programme','Government Breeding Contracts'],
+   'Proportionate share from Year 3'],
+] as [$icon,$title,$bg,$alt,$desc,$features,$payout])
+<section style="background:{{ $bg }}"><div class="wrap">
+  <div style="display:grid;grid-template-columns:1fr;gap:2rem;align-items:center" class="two-col">
+    <div class="revl">
+      <div style="font-size:3rem;margin-bottom:.75rem">{!! $icon !!}</div>
+      <h2 style="font-size:clamp(1.6rem,4vw,2.3rem);margin-bottom:.8rem">{!! $title !!}</h2>
+      <p style="color:#555;line-height:1.85;margin-bottom:1.25rem">{{ $desc }}</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.25rem">
+        @foreach($features as $f)
+        <div style="background:var(--pklx);border-radius:8px;padding:.5rem .75rem;font-size:.78rem;font-weight:600;color:var(--pkd)">{!! $f !!}</div>
+        @endforeach
+      </div>
+      <div style="display:inline-block;background:linear-gradient(135deg,var(--pkd),var(--pk));color:#fff;padding:.45rem 1rem;border-radius:20px;font-size:.75rem;font-weight:700">{{ $payout }}</div>
+    </div>
+  </div>
+</div></section>
+@endforeach
+
+<section style="background:var(--ink)" class="dots-bg"><div class="wrap">
+  <div style="text-align:center;margin-bottom:2rem">
+    <div class="chip" style="color:var(--pk)">The Process</div>
+    <h2 style="font-size:clamp(1.6rem,4vw,2.4rem);color:#fff;margin-top:.4rem">How <em>Your Investment Works</em></h2>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+    @foreach([['1','Subscribe','Complete the form. Our team reviews and sends your SPV subscription agreement.'],['2','Allotment','Cattle are allotted and RFID-tagged in your name after payment tranches are completed.'],['3','Grow &amp; Harvest','Your herd grows. Dairy, beef and breeding stock generate your quarterly distributions from Year 3.'],['4','Settlement','Full principal return plus returns at Year 5. Option to reinvest for continued compounding.']] as [$n,$title,$desc])
+    <div class="rev" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.4rem;text-align:center">
+      <div style="width:40px;height:40px;background:linear-gradient(135deg,var(--pkd),var(--pk));border-radius:50%;display:grid;place-items:center;font-size:1rem;font-weight:800;color:#fff;margin:0 auto .85rem">{{ $n }}</div>
+      <h4 style="color:#fff;margin-bottom:.5rem">{!! $title !!}</h4>
+      <p style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.65">{{ $desc }}</p>
+    </div>
+    @endforeach
+  </div>
+  <div style="text-align:center;margin-top:2rem">
+    <a href="{{ route('invest') }}" class="bp">Start Your Investment →</a>
+  </div>
+</div></section>
+@endsection
