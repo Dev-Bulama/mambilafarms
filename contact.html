@@ -136,6 +136,15 @@
           </div>
           <div style="margin-top:.8rem;padding:.65rem;background:var(--pklx);border-radius:9px;font-size:.74rem;color:var(--t2);line-height:1.55">Pay to: <strong style="color:var(--pkd)">Mambilla Legacy Farms</strong><br>Ref: LF / [Your Name] / [Tier]</div>
         </div>
+
+        <!-- ADMIN TOOLS CARD -->
+        <div style="background:#1A0A12;border-radius:16px;padding:1.4rem;border:1px solid rgba(255,255,255,.06)">
+          <h4 style="font-size:.68rem;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:.6rem">⚙ Admin Tools</h4>
+          <p style="font-size:.74rem;color:rgba(255,255,255,.38);line-height:1.65;margin-bottom:.9rem">Excel auto-downloads to your <strong style="color:rgba(255,255,255,.55)">Downloads folder</strong> on each submission. Click below to re-export all registrations stored in this browser at any time.</p>
+          <button onclick="downloadAllRegistrations()" style="width:100%;background:rgba(255,84,135,.08);border:1px solid rgba(255,84,135,.25);color:rgba(255,255,255,.65);padding:.65rem 1rem;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .2s,border-color .2s,color .2s" onmouseover="this.style.background='rgba(255,84,135,.18)';this.style.borderColor='var(--pk)';this.style.color='#FF5487'" onmouseout="this.style.background='rgba(255,84,135,.08)';this.style.borderColor='rgba(255,84,135,.25)';this.style.color='rgba(255,255,255,.65)'">⬇ Download All Registrations</button>
+          <p style="font-size:.67rem;color:rgba(255,255,255,.2);margin-top:.55rem;line-height:1.5">File: <em>Mambilla_Investor_Registrations.xlsx</em></p>
+        </div>
+
       </div>
     </div>
   </div>
@@ -149,26 +158,303 @@
   <div class="mo">
     <div style="font-size:2.5rem;margin-bottom:.9rem">🐄</div>
     <h3 style="font-size:1.4rem;color:var(--pkd);margin-bottom:.65rem">Submission Received!</h3>
-    <p style="color:var(--t2);line-height:1.75;margin-bottom:1.4rem;font-size:.88rem">Thank you for your interest in Mambilla Legacy Farms. Our team will contact you at <strong id="cmail" style="color:var(--pkd)"></strong> within 24 hours with your reference number and onboarding details.</p>
-    <button class="bp" onclick="document.getElementById('modal').classList.remove('open')">Close</button>
+    <p style="color:var(--t2);line-height:1.75;margin-bottom:.9rem;font-size:.88rem">Thank you for your interest in Mambilla Legacy Farms. Our team will contact you at <strong id="cmail" style="color:var(--pkd)"></strong> within 24 hours with your reference number and onboarding details.</p>
+    <p style="font-size:.78rem;color:var(--t2);background:var(--pklx);border-radius:8px;padding:.55rem .85rem;margin-bottom:1.2rem;line-height:1.6"><strong style="color:var(--pkd)">✅ Excel downloaded</strong> — check your <strong>Downloads folder</strong> for <code style="font-size:.74rem;background:rgba(0,0,0,.06);padding:1px 5px;border-radius:4px">Mambilla_Investor_Registrations.xlsx</code><br><span style="color:#aaa">Total registrations stored: <strong id="regcount" style="color:var(--pkd)">0</strong></span></p>
+    <div style="display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center">
+      <button class="bp" onclick="downloadAllRegistrations()" style="font-size:.82rem">⬇ Download All Registrations</button>
+      <button onclick="document.getElementById('modal').classList.remove('open')" style="padding:.65rem 1.4rem;border-radius:9px;border:1.5px solid var(--pkl);background:#fff;color:var(--t2);font-size:.82rem;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">Close</button>
+    </div>
   </div>
 </div>
 
+<!-- ▸ SheetJS — client-side Excel generation (no backend needed) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- ▸ EmailJS — send email notifications from pure JS (no backend needed) -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="js/components.js"></script>
 <script src="js/main.js"></script>
 <script>
-// Responsive sidebar
+/* ================================================================
+   MAMBILLA LEGACY FARMS — INVESTOR REGISTRATION ENGINE
+   ================================================================
+   HOW IT WORKS
+   ─────────────────────────────────────────────────────────────────
+   • Every submission is saved to this browser's localStorage
+   • An Excel file auto-downloads to your Downloads folder on submit
+   • A styled HTML alert is emailed to every address in ADMIN_EMAILS
+   • Use the "⬇ Download All Registrations" button (sidebar / modal)
+     to re-export all stored submissions at any time
+
+   WHERE TO FIND YOUR EXCEL
+   ─────────────────────────────────────────────────────────────────
+   Browser Downloads folder → Mambilla_Investor_Registrations.xlsx
+   (Each submission updates and re-downloads the same file name)
+
+   NOTE: localStorage is per-browser — if different admins use
+   different devices, combine the Excel exports manually.
+   ================================================================ */
+
+
+// ────────────────────────────────────────────────────────────────
+// 📧 STEP 1 — PUT YOUR NOTIFICATION EMAIL ADDRESSES HERE
+//    Everyone listed gets a styled alert on every new registration
+// ────────────────────────────────────────────────────────────────
+const ADMIN_EMAILS = [
+  'invest@legacyfarms.ng',         // ← REPLACE with a real email address
+  // 'manager@sab-foundation.ng',  // ← Uncomment to add more recipients
+  // 'team@successory-ng.com',
+];
+
+
+// ────────────────────────────────────────────────────────────────
+// 🔑 STEP 2 — EMAILJS SETUP  (free at https://www.emailjs.com)
+//
+//  1. Sign up → Email Services → Add Service (Gmail / Outlook / SMTP)
+//     → note the  Service ID
+//  2. Email Templates → Create Template → configure:
+//       To Email    :  {{to_email}}
+//       Subject     :  {{subject}}
+//       HTML Body   :  {{{html_content}}}   ← triple braces (unescaped HTML)
+//     Save → note the  Template ID
+//  3. Account → General → copy your  Public Key
+//
+//  Paste the three values below:
+// ────────────────────────────────────────────────────────────────
+const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY_HERE';    // ← Account → General
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID_HERE';    // ← Email Services tab
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID_HERE';   // ← Email Templates tab
+
+// Initialize EmailJS
+emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+// localStorage key
+const REG_KEY = 'mlf_investor_registrations';
+
+
+// ================================================================
+// FORM SUBMISSION HANDLER
+// ================================================================
+async function fs(e) {
+  e.preventDefault();
+  const f = e.target;
+
+  // Validate required fields
+  let ok = true;
+  f.querySelectorAll('[required]').forEach(el => {
+    if (!el.checkValidity()) {
+      ok = false;
+      el.style.borderColor = 'var(--pkd)';
+      el.addEventListener('input', () => el.style.borderColor = '', {once: true});
+    }
+  });
+  if (!ok) return;
+
+  // Collect preferred-communication checkboxes
+  const comms = [...document.querySelectorAll('.comm-row input[type=checkbox]:checked')]
+    .map(cb => cb.closest('label').textContent.trim()).join(', ');
+
+  // Build data record
+  const data = {
+    'Timestamp':      new Date().toLocaleString('en-NG', {timeZone: 'Africa/Lagos'}),
+    'Full Name':      document.getElementById('fn').value,
+    'Date of Birth':  document.getElementById('fd').value,
+    'BVN / RC No.':   document.getElementById('fb').value,
+    'Tax ID (TIN)':   document.getElementById('ft2').value || '—',
+    'Phone':          document.getElementById('fp').value,
+    'Alt Phone':      document.getElementById('fp2').value || '—',
+    'Email':          document.getElementById('fe').value,
+    'Address':        document.getElementById('fa').value,
+    'City / State':   document.getElementById('fc').value || '—',
+    'Country':        document.getElementById('fco').value,
+    'Communication':  comms || '—',
+    'Investor Type':  document.getElementById('fit').value,
+    'Tier':           document.getElementById('ftier').value,
+    'Custom Amount':  document.getElementById('fca').value || '—',
+    'Payment Method': document.getElementById('fpm').value,
+    'Notes':          document.getElementById('fno').value || '—',
+  };
+
+  // Persist to localStorage
+  const all = JSON.parse(localStorage.getItem(REG_KEY) || '[]');
+  all.push(data);
+  localStorage.setItem(REG_KEY, JSON.stringify(all));
+
+  // Auto-download updated Excel
+  exportExcel(all);
+
+  // Send email notifications (non-blocking — won't break UX if it fails)
+  sendNotification(data).catch(err =>
+    console.warn('[MLF] Email notification failed:', err.text || err.message || err)
+  );
+
+  // Show modal
+  document.getElementById('cmail').textContent = data['Email'];
+  document.getElementById('regcount').textContent = all.length;
+  document.getElementById('modal').classList.add('open');
+  f.reset();
+  tgc('');
+}
+
+
+// ================================================================
+// EXCEL EXPORT  (SheetJS)
+// ================================================================
+function exportExcel(registrations) {
+  if (!registrations.length) return;
+  const headers = Object.keys(registrations[0]);
+  const rows = registrations.map(r => headers.map(h => r[h]));
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  ws['!cols'] = headers.map(h => ({ wch: Math.max(h.length + 4, 20) }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Investor Registrations');
+  XLSX.writeFile(wb, 'Mambilla_Investor_Registrations.xlsx');
+}
+
+// Re-export everything stored in this browser — called by admin buttons
+function downloadAllRegistrations() {
+  const all = JSON.parse(localStorage.getItem(REG_KEY) || '[]');
+  if (!all.length) {
+    alert('No registrations stored in this browser yet.');
+    return;
+  }
+  exportExcel(all);
+}
+
+
+// ================================================================
+// EMAIL NOTIFICATION  (EmailJS)
+// ================================================================
+async function sendNotification(data) {
+  const subject = `🐄 New Investor — ${data['Full Name']} · ${data['Tier']} Tier`;
+  const html = buildEmailHTML(data);
+  for (const email of ADMIN_EMAILS) {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_email:       email,
+      subject:        subject,
+      html_content:   html,
+      investor_name:  data['Full Name'],
+      investor_tier:  data['Tier'],
+      investor_email: data['Email'],
+    });
+  }
+}
+
+
+// ================================================================
+// STYLED EMAIL HTML BUILDER
+// ================================================================
+function buildEmailHTML(d) {
+  const r = (label, value) => `
+    <tr>
+      <td style="padding:10px 16px;font-size:11px;font-weight:700;color:#9a90a8;text-transform:uppercase;letter-spacing:0.07em;width:148px;vertical-align:top;white-space:nowrap">${label}</td>
+      <td style="padding:10px 16px;font-size:13.5px;color:#1A0A12;font-weight:500;border-left:2px solid #fce4ef">${value || '—'}</td>
+    </tr>`;
+
+  const sec = (icon, title, rows) => `
+    <div style="margin-bottom:20px;border-radius:10px;overflow:hidden;box-shadow:0 2px 14px rgba(216,27,122,0.09)">
+      <div style="background:linear-gradient(135deg,#c0105a,#FF5487);padding:10px 18px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:13px">${icon}</span>
+        <span style="font-size:10.5px;font-weight:800;color:rgba(255,255,255,0.92);text-transform:uppercase;letter-spacing:0.12em">${title}</span>
+      </div>
+      <table style="width:100%;border-collapse:collapse;background:#fff">${rows}</table>
+    </div>`;
+
+  return `<!DOCTYPE html><html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f0eef4;font-family:'Helvetica Neue',Arial,sans-serif">
+<table style="width:100%;border-collapse:collapse"><tr><td style="padding:28px 12px">
+<table style="max-width:580px;margin:0 auto;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 10px 50px rgba(26,10,18,0.2)">
+
+  <!-- HEADER -->
+  <tr>
+    <td style="background:linear-gradient(160deg,#1A0A12 0%,#3b1230 55%,#5e1c4a 100%);padding:34px 32px 30px;text-align:center">
+      <div style="font-size:9.5px;font-weight:700;color:rgba(255,255,255,0.32);text-transform:uppercase;letter-spacing:0.2em;margin-bottom:10px">Mambilla Legacy Farms · A SAB Foundation Initiative</div>
+      <div style="font-size:27px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:16px">New Investor Registration</div>
+      <div style="display:inline-block;background:linear-gradient(135deg,#c0105a,#FF5487);padding:7px 22px;border-radius:24px;font-size:13px;font-weight:700;color:#fff;letter-spacing:0.04em">${d['Tier']} Tier</div>
+      <div style="margin-top:12px;font-size:11px;color:rgba(255,255,255,0.35)">${d['Timestamp']}</div>
+    </td>
+  </tr>
+
+  <!-- ACTION BANNER -->
+  <tr>
+    <td style="background:#fff9eb;padding:14px 24px;border-left:4px solid #f5a623">
+      <span style="font-size:13px;color:#a07000;font-weight:700">⚡ Action Required</span>
+      <span style="font-size:13px;color:#7a6020;margin-left:8px">Follow up with this investor within 24 hours.</span>
+    </td>
+  </tr>
+
+  <!-- BODY -->
+  <tr>
+    <td style="background:#f0eef4;padding:24px 20px 10px">
+
+      ${sec('👤', 'Personal Information',
+        r('Full Name', `<strong style="font-size:15px">${d['Full Name']}</strong>`) +
+        r('Date of Birth', d['Date of Birth']) +
+        r('BVN / RC No.', d['BVN / RC No.']) +
+        r('Tax ID (TIN)', d['Tax ID (TIN)']) +
+        r('Investor Type', d['Investor Type'])
+      )}
+
+      ${sec('📞', 'Contact Details',
+        r('Email', `<a href="mailto:${d['Email']}" style="color:#c0105a;text-decoration:none;font-weight:700">${d['Email']}</a>`) +
+        r('Phone', d['Phone']) +
+        r('Alt Phone', d['Alt Phone']) +
+        r('Address', d['Address']) +
+        r('City / State', d['City / State']) +
+        r('Country', d['Country']) +
+        r('Preferred Comms', d['Communication'])
+      )}
+
+      ${sec('💰', 'Investment Details',
+        r('Tier', `<strong style="color:#c0105a;font-size:15px">${d['Tier']}</strong>`) +
+        r('Custom Amount', d['Custom Amount']) +
+        r('Payment Method', d['Payment Method']) +
+        r('Notes', d['Notes'])
+      )}
+
+    </td>
+  </tr>
+
+  <!-- CTA BUTTON -->
+  <tr>
+    <td style="background:#f0eef4;padding:8px 20px 30px;text-align:center">
+      <a href="mailto:${d['Email']}?subject=Re%3A%20Your%20Mambilla%20Legacy%20Farms%20Investment%20Inquiry&body=Dear%20${encodeURIComponent(d['Full Name'])}%2C"
+         style="display:inline-block;background:linear-gradient(135deg,#c0105a,#FF5487);color:#fff;text-decoration:none;padding:14px 34px;border-radius:9px;font-size:14px;font-weight:700;letter-spacing:0.03em">
+        Reply to Investor →
+      </a>
+    </td>
+  </tr>
+
+  <!-- FOOTER -->
+  <tr>
+    <td style="background:#1A0A12;padding:22px 32px;text-align:center">
+      <div style="font-size:11px;color:rgba(255,255,255,0.28);line-height:1.85">
+        Mambilla Legacy Farms · Mambilla Plateau, Taraba State, Nigeria<br>
+        invest@legacyfarms.ng · www.legacyfarms.ng<br>
+        <span style="color:rgba(255,255,255,0.14)">Automated registration alert — do not reply to this message.</span>
+      </div>
+    </td>
+  </tr>
+
+</table>
+</td></tr></table>
+</body></html>`;
+}
+
+
+// ================================================================
+// RESPONSIVE LAYOUT & URL PRE-FILL
+// ================================================================
 (function(){
   function layout(){
     const fl=document.getElementById('form-layout');
     if(!fl)return;
     if(window.innerWidth>=960){
       fl.style.gridTemplateColumns='2fr 1fr';
-      // make sidebar sticky
       fl.children[1].style.position='sticky';
       fl.children[1].style.top='112px';
       fl.children[1].style.alignSelf='start';
-    } else {
+    }else{
       fl.style.gridTemplateColumns='1fr';
       fl.children[1].style.position='';
       fl.children[1].style.top='';
@@ -178,7 +464,6 @@
   layout();
 })();
 
-// Pre-fill tier from URL
 (function(){
   const p=new URLSearchParams(window.location.search);
   const t=p.get('tier');
@@ -189,18 +474,6 @@
 })();
 
 function tgc(v){document.getElementById('caf').style.display=v==='Custom'?'block':'none'}
-
-function fs(e){
-  e.preventDefault();
-  const f=e.target;
-  const required=f.querySelectorAll('[required]');
-  let ok=true;
-  required.forEach(el=>{if(!el.checkValidity()){ok=false;el.style.borderColor='var(--pkd)';el.addEventListener('input',()=>el.style.borderColor='',{once:true})}});
-  if(!ok)return;
-  document.getElementById('cmail').textContent=document.getElementById('fe').value||'your email';
-  document.getElementById('modal').classList.add('open');
-  f.reset();
-}
 </script>
 </body>
 </html>
