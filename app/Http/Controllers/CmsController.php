@@ -9,23 +9,17 @@ class CmsController extends Controller
 {
     private array $settingKeys = [
         // ── Homepage ──────────────────────────────────────────────
-        // Hero (shared with settings page — same keys)
         'site_hero_eyebrow', 'site_hero_title', 'site_hero_body',
-        // Hero stats bar
         'home_stat_1_num', 'home_stat_1_label',
         'home_stat_2_num', 'home_stat_2_label',
         'home_stat_3_num', 'home_stat_3_label',
         'home_stat_4_num', 'home_stat_4_label',
         'home_stat_5_num', 'home_stat_5_label',
-        // Three Pillars
         'home_pillar_1_icon', 'home_pillar_1_title', 'home_pillar_1_body', 'home_pillar_1_tag',
         'home_pillar_2_icon', 'home_pillar_2_title', 'home_pillar_2_body', 'home_pillar_2_tag',
         'home_pillar_3_icon', 'home_pillar_3_title', 'home_pillar_3_body', 'home_pillar_3_tag',
-        // Why Invest section
         'home_why_chip', 'home_why_heading', 'home_why_body', 'home_why_stat',
-        // CTA banner
         'home_cta_heading', 'home_cta_body',
-        // Announcement bar (shared with settings page)
         'site_ann_1', 'site_ann_2', 'site_ann_3',
 
         // ── About Page ────────────────────────────────────────────
@@ -48,6 +42,14 @@ class CmsController extends Controller
         'tiers_section_heading', 'tiers_section_sub',
     ];
 
+    // Image setting keys that store file paths in storage/app/public/hero-images/
+    private array $imageKeys = [
+        'hero_home_slide_1', 'hero_home_slide_2', 'hero_home_slide_3',
+        'hero_home_slide_4', 'hero_home_slide_5',
+        'hero_about', 'hero_wwd', 'hero_tiers', 'hero_invest',
+        'about_vision_image',
+    ];
+
     public function show()
     {
         $settings = Setting::all_keyed();
@@ -56,9 +58,30 @@ class CmsController extends Controller
 
     public function update(Request $request)
     {
+        $request->validate([
+            'hero_home_slide_1' => 'nullable|image|max:4096',
+            'hero_home_slide_2' => 'nullable|image|max:4096',
+            'hero_home_slide_3' => 'nullable|image|max:4096',
+            'hero_home_slide_4' => 'nullable|image|max:4096',
+            'hero_home_slide_5' => 'nullable|image|max:4096',
+            'hero_about'        => 'nullable|image|max:4096',
+            'hero_wwd'          => 'nullable|image|max:4096',
+            'hero_tiers'        => 'nullable|image|max:4096',
+            'hero_invest'       => 'nullable|image|max:4096',
+            'about_vision_image'=> 'nullable|image|max:4096',
+        ]);
+
         foreach ($this->settingKeys as $key) {
             if ($request->has($key)) {
                 Setting::set($key, $request->input($key));
+            }
+        }
+
+        // Handle image uploads
+        foreach ($this->imageKeys as $key) {
+            if ($request->hasFile($key)) {
+                $path = $request->file($key)->store('hero-images', 'public');
+                Setting::set($key, $path);
             }
         }
 

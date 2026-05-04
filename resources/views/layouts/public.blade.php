@@ -42,7 +42,7 @@ try {
 </div>
 
 {{-- Navigation --}}
-<nav id="nav" class="top">
+<nav id="nav" class="{{ ($page ?? '') === 'home' ? 'top' : '' }}">
   <div class="ni">
     <a href="{{ route('home') }}" class="logo">
       <span class="le">MLF</span>

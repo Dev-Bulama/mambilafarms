@@ -17,12 +17,17 @@ function closeMob(){
   document.body.style.overflow='';
 }
 
-// Nav scroll effect
+// Nav scroll effect — transparent only on homepage
+const _isHome=document.body.dataset.page==='home';
+if(!_isHome){
+  const _n=document.getElementById('nav');
+  if(_n)_n.classList.remove('top');
+}
 window.addEventListener('scroll',()=>{
+  if(!_isHome)return;
   const n=document.getElementById('nav');
   if(!n)return;
-  const atTop=window.scrollY<50;
-  n.classList.toggle('top',atTop);
+  n.classList.toggle('top',window.scrollY<50);
 },{passive:true});
 
 // Scroll reveals

@@ -44,6 +44,20 @@ try {
 
   $ctaHeading = \App\Models\Setting::get('home_cta_heading', 'Ready to Build Your Legacy?');
   $ctaBody    = \App\Models\Setting::get('home_cta_body', 'Complete the subscription form and our team will contact you within 24 hours.');
+
+  // Hero slide images — Nigerian cattle defaults, overridable via admin CMS
+  $slideDefaultUrls = [
+    'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=80',
+    'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=1600&q=80',
+    'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=1600&q=80',
+    'https://images.unsplash.com/photo-1527153818091-1a9638521e2a?w=1600&q=80',
+    'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=1600&q=80',
+  ];
+  $slideImages = [];
+  for ($si = 1; $si <= 5; $si++) {
+    $stored = \App\Models\Setting::get('hero_home_slide_'.$si);
+    $slideImages[] = $stored ? asset('storage/'.$stored) : $slideDefaultUrls[$si-1];
+  }
 } catch (\Exception $e) {
   $heroEyebrow = "Nigeria's Cattle Revolution";
   $heroTitle   = 'Build Lasting Wealth Through Livestock';
@@ -58,17 +72,23 @@ try {
   $whyBody = "The Mambilla Plateau—Nigeria's highest grassland—offers optimal conditions.";
   $whyStat = '57%'; $ctaHeading = 'Ready to Build Your Legacy?';
   $ctaBody = 'Complete the subscription form and our team will contact you within 24 hours.';
+  $slideDefaultUrls = [
+    'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=80',
+    'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=1600&q=80',
+    'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=1600&q=80',
+    'https://images.unsplash.com/photo-1527153818091-1a9638521e2a?w=1600&q=80',
+    'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=1600&q=80',
+  ];
+  $slideImages = $slideDefaultUrls;
 }
 @endphp
 @section('title', 'Mambilla Legacy Farms — Invest in Nigeria\'s Cattle Revolution')
 
 @section('hero')
 <div class="hero">
-  <div class="slide s0 on"></div>
-  <div class="slide s1"></div>
-  <div class="slide s2"></div>
-  <div class="slide s3"></div>
-  <div class="slide s4"></div>
+  @foreach($slideImages as $si => $sUrl)
+  <div class="slide{{ $si === 0 ? ' on' : '' }}" style="background-image:url('{{ $sUrl }}')"></div>
+  @endforeach
 
   <div class="hc">
     <div class="eye"><i></i>{{ $heroEyebrow }}</div>
@@ -131,7 +151,7 @@ try {
       </div>
       <div class="revr" style="position:relative">
         <div style="border-radius:18px;overflow:hidden;aspect-ratio:4/3">
-          <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=80" alt="Cattle herd" style="width:100%;height:100%;object-fit:cover"/>
+          <img src="https://images.unsplash.com/photo-1493962853295-0fd70327578a?w=800&q=80" alt="Nigerian Gudali cattle" style="width:100%;height:100%;object-fit:cover"/>
         </div>
         <div style="position:absolute;bottom:-1rem;right:-1rem;background:linear-gradient(135deg,var(--pkd),var(--pk));border-radius:14px;padding:1rem 1.2rem;text-align:center;box-shadow:0 8px 28px rgba(255,84,135,.35)">
           <div style="font-size:1.8rem;font-weight:800;color:#fff;font-family:'Cormorant Garamond',serif">{{ $whyStat }}</div>

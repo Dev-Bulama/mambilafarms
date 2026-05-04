@@ -122,11 +122,7 @@ button{font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer}
   content:'';position:absolute;inset:0;
   background:linear-gradient(160deg,rgba(26,10,18,.88) 0%,rgba(200,20,110,.28) 60%,rgba(26,10,18,.12) 100%);
 }
-.s0{background-image:url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=80')}
-.s1{background-image:url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1600&q=80')}
-.s2{background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')}
-.s3{background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80')}
-.s4{background-image:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=80')}
+/* Slide backgrounds are now set via inline styles in home.blade.php (DB-driven) */
 
 .hc{
   position:absolute;inset:0;z-index:10;
@@ -263,11 +259,11 @@ section{padding:3.5rem 1.25rem}
 
 /* ─── PAGE BANNER ─── */
 .pb{
-  height:340px;position:relative;overflow:hidden;
+  height:320px;position:relative;overflow:hidden;
   background-size:cover;background-position:center;
 }
 .pb::after{content:'';position:absolute;inset:0;background:linear-gradient(140deg,rgba(26,10,18,.88) 0%,rgba(200,20,110,.3) 55%,rgba(26,10,18,.18) 100%)}
-.pbc{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem 1.25rem}
+.pbc{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem 1.25rem}
 
 /* ─── TIERS ─── */
 .tc{border-radius:18px;overflow:hidden;border:2px solid transparent;transition:all .3s;background:#fff;box-shadow:0 3px 18px rgba(255,84,135,.07)}
@@ -347,7 +343,7 @@ footer h5{color:rgba(255,255,255,.78);font-size:.7rem;font-weight:700;letter-spa
   .hero{height:calc(100svh - var(--nav-h));min-height:600px}
   .hc{padding:2rem 1.75rem 8rem}
   .pbc{padding:2rem 1.75rem;justify-content:flex-end}
-  .pb{height:380px}
+  .pb{height:360px}
   .footer-grid{grid-template-columns:2fr 1fr 1fr}
 }
 
@@ -368,7 +364,7 @@ footer h5{color:rgba(255,255,255,.78);font-size:.7rem;font-weight:700;letter-spa
   .form-grid{grid-template-columns:1fr 1fr;gap:1rem}
   .hc{padding:3rem 2rem 9rem;max-width:1300px;left:0;right:0;margin:0 auto;position:absolute}
   .footer-grid{grid-template-columns:2fr 1fr 1fr 1fr}
-  .pb{height:420px}
+  .pb{height:400px}
   .pbc{padding:2rem;align-items:center;justify-content:center;text-align:center}
   .hero{height:calc(100svh - var(--nav-h))}
   .page-top{padding-top:var(--top-off)}
@@ -393,3 +389,62 @@ footer h5{color:rgba(255,255,255,.78);font-size:.7rem;font-weight:700;letter-spa
 
 /* ─── FOOTER BOTTOM ─── */
 .foot-bottom{padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.07);text-align:center;font-size:.75rem;color:rgba(255,255,255,.2)}
+
+/* ═══════════════════════════
+   MOBILE IMPROVEMENTS
+═══════════════════════════ */
+
+/* Footer: single column on mobile for readability */
+@media(max-width:599px){
+  .footer-grid{grid-template-columns:1fr;gap:1.75rem}
+
+  /* Tier grid: single col on very small screens */
+  .g4{grid-template-columns:1fr 1fr}
+
+  /* Hero content: tighter padding on mobile */
+  .hc{padding:1rem 1rem 6rem}
+
+  /* Page banner: slightly shorter on small mobile */
+  .pb{height:300px}
+
+  /* Buttons: full-width on mobile */
+  .bp,.bpg,.bg,.bo{width:100%}
+
+  /* Invest page contact cards: stack vertically */
+  .inv-contact-grid{grid-template-columns:1fr!important}
+
+  /* Form: reduce horizontal padding */
+  section{padding:3rem 1rem}
+
+  /* Tiers grid preview on home page: stack */
+  .tier-home-grid{grid-template-columns:1fr!important}
+
+  /* Nav logo text: slightly smaller on very small screens */
+  .ln{font-size:.88rem}
+
+  /* Table: force horizontal scroll with better UX */
+  .tw{-webkit-overflow-scrolling:touch;border-radius:10px}
+
+  /* Pillar cards: ensure readable spacing */
+  .pillar-card{padding:1.25rem 1rem}
+
+  /* pbc bottom padding on small screens */
+  .pbc{padding:1.5rem 1rem}
+}
+
+/* Improved tap targets for mobile links */
+@media(max-width:960px){
+  .mob-menu a{min-height:54px}
+  .bp,.bpg,.bg,.bo{min-height:48px}
+}
+
+/* Fix page-top on mobile when announcement bar hidden */
+@media(max-width:959px){
+  .page-top{padding-top:var(--nav-h)}
+}
+
+/* Two-col grid used in About, What We Do sections */
+.two-col{display:grid;grid-template-columns:1fr;gap:2.5rem}
+@media(min-width:960px){
+  .two-col{grid-template-columns:1fr 1fr;align-items:center}
+}

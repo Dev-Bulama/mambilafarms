@@ -6,18 +6,21 @@ try {
   $heroSub       = \App\Models\Setting::get('tiers_hero_sub', 'Six structured tiers from ₦10M to ₦1B+. Every tier includes insurance, dashboard access and quarterly reporting.');
   $secHeading    = \App\Models\Setting::get('tiers_section_heading', 'Choose Your Investment Level');
   $secSub        = \App\Models\Setting::get('tiers_section_sub', 'Every tier includes livestock insurance, digital dashboard, and quarterly reports.');
+  $storedTiersHero = \App\Models\Setting::get('hero_tiers');
+  $tiersHeroImg = $storedTiersHero ? asset('storage/'.$storedTiersHero) : 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=80';
 } catch (\Exception $e) {
   $heroTitle = 'Investment Tiers';
   $heroSub   = 'Six structured tiers from ₦10M to ₦1B+. Every tier includes insurance, dashboard access and quarterly reporting.';
   $secHeading = 'Choose Your Investment Level';
   $secSub = 'Every tier includes livestock insurance, digital dashboard, and quarterly reports.';
+  $tiersHeroImg = 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=80';
 }
 @endphp
 @section('title', 'Investment Tiers — Mambilla Legacy Farms')
 
 @section('hero')
 <div class="page-top">
-  <div class="pb" style="background-image:url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=80')">
+  <div class="pb" style="background-image:url('{{ $tiersHeroImg }}')">
     <div class="pbc">
       <div class="chip" style="color:var(--pk)">Investment Options</div>
       <h1 style="font-size:clamp(2rem,6vw,3.8rem);color:#fff;font-weight:600;line-height:1.1;margin-top:.4rem">{{ $heroTitle }}</h1>
