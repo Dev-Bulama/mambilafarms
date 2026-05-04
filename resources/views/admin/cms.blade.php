@@ -10,24 +10,117 @@
 .cms-tab.active{background:rgba(255,84,135,.15);color:var(--pk)}
 .cms-pane{display:none}.cms-pane.active{display:block}
 .sec-hdr{font-size:.65rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:.35rem .6rem;margin:1.2rem 0 .8rem;border-left:3px solid var(--pk)}
+.img-upload-row{display:grid;grid-template-columns:180px 1fr;gap:1.25rem;align-items:start;padding:.9rem 0;border-bottom:1px solid var(--border)}
+.img-upload-row:last-child{border-bottom:none}
+.img-preview{width:180px;height:110px;object-fit:cover;border-radius:10px;border:2px solid var(--border);background:rgba(255,255,255,.04)}
+.img-preview-placeholder{width:180px;height:110px;border-radius:10px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--t2);text-align:center;padding:.5rem}
 </style>
 @endpush
 
 @section('content')
-<form method="POST" action="{{ route('admin.cms.update') }}">
+<form method="POST" action="{{ route('admin.cms.update') }}" enctype="multipart/form-data">
 @csrf
 
 {{-- Tabs --}}
 <div class="cms-tabs">
-  <button type="button" class="cms-tab active" onclick="showTab('home')">🏠 Homepage</button>
+  <button type="button" class="cms-tab active" onclick="showTab('images')">🖼️ Images</button>
+  <button type="button" class="cms-tab" onclick="showTab('home')">🏠 Homepage</button>
   <button type="button" class="cms-tab" onclick="showTab('about')">📖 About</button>
   <button type="button" class="cms-tab" onclick="showTab('wwd')">⚙️ What We Do</button>
   <button type="button" class="cms-tab" onclick="showTab('tiers')">💰 Tiers</button>
   <button type="button" class="cms-tab" onclick="showTab('global')">🌐 Global / Nav</button>
 </div>
 
+{{-- ══════════════════════════════ IMAGES ══════════════════════════════ --}}
+<div class="cms-pane active" id="pane-images">
+
+  <div class="card">
+    <div class="card-title">🎠 Homepage Hero Slides (5 rotating images)</div>
+    <p style="font-size:.78rem;color:var(--t2);margin-bottom:1rem;line-height:1.6">Upload images to replace the default cattle photos on the homepage carousel. Recommended: landscape, at least 1400×900px JPG/PNG.</p>
+    @php
+    $slideDefaults = [
+      'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=400&q=60',
+      'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=400&q=60',
+      'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400&q=60',
+      'https://images.unsplash.com/photo-1527153818091-1a9638521e2a?w=400&q=60',
+      'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=400&q=60',
+    ];
+    @endphp
+    @for($i = 1; $i <= 5; $i++)
+    @php $imgKey = 'hero_home_slide_'.$i; $stored = $settings[$imgKey] ?? null; @endphp
+    <div class="img-upload-row">
+      <div>
+        @if($stored)
+          <img src="{{ asset('storage/'.$stored) }}" alt="Slide {{ $i }}" class="img-preview"/>
+        @else
+          <img src="{{ $slideDefaults[$i-1] }}" alt="Slide {{ $i }} default" class="img-preview" style="opacity:.55"/>
+        @endif
+        @if($stored)<div style="font-size:.62rem;color:var(--pk);margin-top:.3rem;text-align:center">✓ Custom image active</div>@endif
+      </div>
+      <div>
+        <div class="form-group" style="margin-bottom:.5rem">
+          <label class="form-label">Slide {{ $i }} Background Image</label>
+          <input class="form-control" type="file" name="{{ $imgKey }}" accept="image/*"/>
+        </div>
+        @if($stored)
+        <div style="font-size:.7rem;color:var(--t2)">Current: {{ basename($stored) }}</div>
+        @else
+        <div style="font-size:.7rem;color:var(--t2)">Using default Nigerian cattle image. Upload to replace.</div>
+        @endif
+      </div>
+    </div>
+    @endfor
+  </div>
+
+  <div class="card">
+    <div class="card-title">🖼️ Inner Page Hero Backgrounds</div>
+    <p style="font-size:.78rem;color:var(--t2);margin-bottom:1rem;line-height:1.6">Background images for each page's banner section. Recommended: landscape 1400×600px minimum.</p>
+    @php
+    $pageImages = [
+      ['hero_about',        'About Page Hero'],
+      ['hero_wwd',          'What We Do Page Hero'],
+      ['hero_tiers',        'Investment Tiers Page Hero'],
+      ['hero_invest',       'Start Investing Page Hero'],
+      ['about_vision_image','About — Vision Section Image'],
+    ];
+    $pageDefaults = [
+      'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=400&q=60',
+      'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=400&q=60',
+      'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=400&q=60',
+      'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400&q=60',
+      'https://images.unsplash.com/photo-1493962853295-0fd70327578a?w=400&q=60',
+    ];
+    @endphp
+    @foreach($pageImages as $pi => [$imgKey, $label])
+    @php $stored = $settings[$imgKey] ?? null; @endphp
+    <div class="img-upload-row">
+      <div>
+        @if($stored)
+          <img src="{{ asset('storage/'.$stored) }}" alt="{{ $label }}" class="img-preview"/>
+        @else
+          <img src="{{ $pageDefaults[$pi] }}" alt="{{ $label }} default" class="img-preview" style="opacity:.55"/>
+        @endif
+        @if($stored)<div style="font-size:.62rem;color:var(--pk);margin-top:.3rem;text-align:center">✓ Custom image active</div>@endif
+      </div>
+      <div>
+        <div class="form-group" style="margin-bottom:.5rem">
+          <label class="form-label">{{ $label }}</label>
+          <input class="form-control" type="file" name="{{ $imgKey }}" accept="image/*"/>
+        </div>
+        @if($stored)
+        <div style="font-size:.7rem;color:var(--t2)">Current: {{ basename($stored) }}</div>
+        @else
+        <div style="font-size:.7rem;color:var(--t2)">Using default cattle image. Upload to replace.</div>
+        @endif
+      </div>
+    </div>
+    @endforeach
+  </div>
+
+</div>{{-- /pane-images --}}
+
 {{-- ══════════════════════════════ HOME ══════════════════════════════ --}}
-<div class="cms-pane active" id="pane-home">
+<div class="cms-pane" id="pane-home">
 
   <div class="card">
     <div class="card-title">🦸 Hero Section</div>
@@ -383,14 +476,15 @@ const panes = document.querySelectorAll('.cms-pane');
 function showTab(id) {
   tabs.forEach(t => t.classList.remove('active'));
   panes.forEach(p => p.classList.remove('active'));
-  document.getElementById('pane-' + id).classList.add('active');
+  const pane = document.getElementById('pane-' + id);
+  if (pane) pane.classList.add('active');
   event.target.classList.add('active');
   localStorage.setItem('cms_tab', id);
 }
 
-// Restore last tab
-const saved = localStorage.getItem('cms_tab');
-if (saved && document.getElementById('pane-' + saved)) {
+// Restore last tab (default to images)
+const saved = localStorage.getItem('cms_tab') || 'images';
+if (document.getElementById('pane-' + saved)) {
   tabs.forEach(t => t.classList.remove('active'));
   panes.forEach(p => p.classList.remove('active'));
   document.getElementById('pane-' + saved).classList.add('active');

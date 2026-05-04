@@ -10,6 +10,11 @@ try {
   $ctaHeading = \App\Models\Setting::get('about_cta_heading', 'Ready to Join?');
   $ctaBody    = \App\Models\Setting::get('about_cta_body', 'Choose your tier and complete the subscription form. Our team responds within 24 hours.');
 
+  $storedHero = \App\Models\Setting::get('hero_about');
+  $aboutHeroImg = $storedHero ? asset('storage/'.$storedHero) : 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=80';
+  $storedVision = \App\Models\Setting::get('about_vision_image');
+  $aboutVisionImg = $storedVision ? asset('storage/'.$storedVision) : 'https://images.unsplash.com/photo-1493962853295-0fd70327578a?w=800&q=80';
+
   $partnerDefaults = [
     ['SAB Foundation','Promoter','Provides governance oversight, ensures SPV compliance and investor protection frameworks.'],
     ['Farm Alert Ltd','Technical Partner','Responsible for herd management, veterinary services, AI breeding and operational oversight.'],
@@ -30,6 +35,8 @@ try {
   $visBody1 = "Mambilla Legacy Farms is a structured 5-year livestock investment programme targeting a 1-million-head cattle herd on the Mambilla Plateau, Taraba State.";
   $visBody2 = "Leveraging indigenous Adamawa Gudali genetics enhanced through AI-assisted breeding with Friesian and Simmental crosses, we target superior milk yields, premium beef quality and highly sought-after breeding stock.";
   $ctaHeading = 'Ready to Join?'; $ctaBody = 'Choose your tier and complete the subscription form. Our team responds within 24 hours.';
+  $aboutHeroImg = 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=80';
+  $aboutVisionImg = 'https://images.unsplash.com/photo-1493962853295-0fd70327578a?w=800&q=80';
   $partners = [
     ['SAB Foundation','Promoter','Provides governance oversight, ensures SPV compliance and investor protection frameworks.'],
     ['Farm Alert Ltd','Technical Partner','Responsible for herd management, veterinary services, AI breeding and operational oversight.'],
@@ -41,7 +48,7 @@ try {
 
 @section('hero')
 <div class="page-top">
-  <div class="pb" style="background-image:url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=80')">
+  <div class="pb" style="background-image:url('{{ $aboutHeroImg }}')">
     <div class="pbc">
       <div class="chip" style="color:var(--pk)">Our Story</div>
       <h1 style="font-size:clamp(2rem,6vw,3.8rem);color:#fff;font-weight:600;line-height:1.1;margin-top:.4rem">{{ $heroTitle }}</h1>
@@ -54,7 +61,7 @@ try {
 
 @section('content')
 <section style="background:#fff"><div class="wrap">
-  <div style="display:grid;grid-template-columns:1fr;gap:2.5rem" class="two-col">
+  <div class="two-col">
     <div class="revl">
       <div class="chip">Vision &amp; Mission</div>
       <h2 style="font-size:clamp(1.6rem,4vw,2.4rem);margin-top:.4rem">{{ $visHeading }}</h2>
@@ -62,7 +69,7 @@ try {
       <p style="color:#555;line-height:1.85">{{ $visBody2 }}</p>
     </div>
     <div class="revr">
-      <img src="https://images.unsplash.com/photo-1572016856632-4e9ea9bec7bb?w=800&q=80" alt="Mambilla Plateau" style="width:100%;border-radius:16px;object-fit:cover;aspect-ratio:4/3"/>
+      <img src="{{ $aboutVisionImg }}" alt="Nigerian Gudali cattle herd" style="width:100%;border-radius:16px;object-fit:cover;aspect-ratio:4/3"/>
     </div>
   </div>
 </div></section>

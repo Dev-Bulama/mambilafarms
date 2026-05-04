@@ -31,7 +31,10 @@ class RegistrationController extends Controller
             ->filter(fn($c) => $request->boolean('comm_' . strtolower($c)))
             ->values()->implode(', ');
 
-        DB::transaction(function () use ($data, $comms, $request) {
+        $user     = null;
+        $investor = null;
+
+        DB::transaction(function () use ($data, $comms, &$user, &$investor) {
             // Create user account
             $user = User::create([
                 'name'     => $data['full_name'],
@@ -61,27 +64,27 @@ class RegistrationController extends Controller
                 'notes'              => $data['notes'] ?? null,
                 'status'             => 'pending',
             ]);
-
-            // Send emails — failures are caught so registration isn't blocked
-            try {
-                // Send admin notification to all configured notification emails
-                $notificationSetting = Setting::get(
-                    'admin_notification_emails',
-                    Setting::get('company_email', config('mail.from.address'))
-                );
-                $adminEmails = array_values(array_filter(array_map('trim', explode(',', $notificationSetting))));
-                if (!empty($adminEmails)) {
-                    Mail::to($adminEmails)->send(new InvestorRegisteredAdmin($investor));
-                }
-                // Send confirmation to investor
-                Mail::to($investor->user->email)->send(new InvestorRegisteredConfirmation($investor));
-            } catch (\Exception $e) {
-                logger()->error('Registration mail failed: ' . $e->getMessage());
-            }
-
-            // Log the investor in
-            auth()->login($user);
         });
+
+        // Log the investor in after the transaction commits
+        auth()->login($user);
+
+        // Send emails outside the transaction so SMTP issues never roll back registrations
+        try {
+            $notificationSetting = Setting::get(
+                'admin_notification_emails',
+                Setting::get('company_email', config('mail.from.address'))
+            );
+            $adminEmails = array_values(array_filter(array_map('trim', explode(',', $notificationSetting ?? ''))));
+            if (!empty($adminEmails)) {
+                Mail::to($adminEmails)->send(new InvestorRegisteredAdmin($investor));
+            }
+            // Reload investor with user relationship before sending confirmation
+            $investor->load('user');
+            Mail::to($user->email)->send(new InvestorRegisteredConfirmation($investor));
+        } catch (\Exception $e) {
+            logger()->error('Registration mail failed: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+        }
 
         return redirect()->route('investor.dashboard')
             ->with('success', 'Registration received! Your reference number has been assigned.');

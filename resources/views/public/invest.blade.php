@@ -1,10 +1,18 @@
 @extends('layouts.public')
-@php $page = 'ct'; @endphp
+@php
+$page = 'ct';
+try {
+  $storedInvestHero = \App\Models\Setting::get('hero_invest');
+  $investHeroImg = $storedInvestHero ? asset('storage/'.$storedInvestHero) : 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=1600&q=80';
+} catch (\Exception $e) {
+  $investHeroImg = 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=1600&q=80';
+}
+@endphp
 @section('title', 'Start Investing — Mambilla Legacy Farms')
 
 @section('hero')
 <div class="page-top">
-  <div class="pb" style="background-image:url('https://images.unsplash.com/photo-1567201080580-bfcc97dae346?w=1600&q=80')">
+  <div class="pb" style="background-image:url('{{ $investHeroImg }}')">
     <div class="pbc">
       <div class="chip" style="color:var(--pk)">Get Involved</div>
       <h1 style="font-size:clamp(2rem,6vw,3.8rem);color:#fff;font-weight:600;line-height:1.1;margin-top:.4rem">Start Investing</h1>

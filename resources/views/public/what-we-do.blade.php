@@ -6,6 +6,9 @@ try {
   $heroSub   = \App\Models\Setting::get('wwd_hero_sub', 'Three integrated revenue streams delivering consistent, compounding returns from Year 3.');
   $procHead  = \App\Models\Setting::get('wwd_process_heading', 'How Your Investment Works');
 
+  $storedWwdHero = \App\Models\Setting::get('hero_wwd');
+  $wwdHeroImg = $storedWwdHero ? asset('storage/'.$storedWwdHero) : 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=1600&q=80';
+
   $streamDefaults = [
     ['🥛','Dairy &amp; Artisan Products','Our Friesian crossbreeds produce premium A2 milk processed into fresh milk, artisan yogurt, aged cheese, cultured butter and pure ghee for the Nigerian premium market and ECOWAS exports.','Quarterly payouts from Year 3'],
     ['🥩','Premium Beef &amp; Abattoir','A modern certified abattoir processes feedlot-finished cattle into branded premium cuts for top-tier Nigerian restaurants, hotels and supermarket chains, with export capability to ECOWAS markets.','Event payouts from Year 3'],
@@ -29,13 +32,14 @@ try {
     ['🥩','Premium Beef &amp; Abattoir','A modern certified abattoir processes feedlot-finished cattle...','Event payouts from Year 3'],
     ['🧬','AI Breeding &amp; Superior Genetics','Our AI-assisted breeding programme...','Proportionate share from Year 3'],
   ];
+  $wwdHeroImg = 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=1600&q=80';
 }
 @endphp
 @section('title', 'What We Do — Mambilla Legacy Farms')
 
 @section('hero')
 <div class="page-top">
-  <div class="pb" style="background-image:url('https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=1600&q=80')">
+  <div class="pb" style="background-image:url('{{ $wwdHeroImg }}')">
     <div class="pbc">
       <div class="chip" style="color:var(--pk)">Operations</div>
       <h1 style="font-size:clamp(2rem,6vw,3.8rem);color:#fff;font-weight:600;line-height:1.1;margin-top:.4rem">{{ $heroTitle }}</h1>
@@ -58,7 +62,7 @@ $streamBg = ['#fff','var(--pklx)','#fff'];
 
 @foreach($streams as $si => [$sicon,$stitle,$sbody,$spay])
 <section style="background:{{ $streamBg[$si] }}"><div class="wrap">
-  <div style="display:grid;grid-template-columns:1fr;gap:2rem;align-items:center" class="two-col">
+  <div class="two-col">
     <div class="revl">
       <div style="font-size:3rem;margin-bottom:.75rem">{!! $sicon !!}</div>
       <h2 style="font-size:clamp(1.6rem,4vw,2.3rem);margin-bottom:.8rem">{!! $stitle !!}</h2>
